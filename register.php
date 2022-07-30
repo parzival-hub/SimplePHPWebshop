@@ -1,5 +1,6 @@
 <?php
 session_start();
+include 'functions.php';
 
 // Redirect zum login
 if (array_key_exists('valid', $_SESSION) && $_SESSION["valid"]) {
@@ -7,11 +8,32 @@ if (array_key_exists('valid', $_SESSION) && $_SESSION["valid"]) {
     exit();
 }
 
+$error = "";
 if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
-    $username = sanitize_input($_POST["username"]);
-    $email = sanitize_input($_POST["email"]);
-    $password = sanitize_input($_POST["password"]);
-    $password2 = sanitize_input($_POST["password2"]);
+
+    $unsafe_username = $_POST["username"];
+    $unsafe_email = $_POST["email"];
+    $username = sanitize_input($unsafe_username);
+    $email = sanitize_input($unsafe_email);
+    $password = $_POST["password"];
+    $password2 = $_POST["password2"];
+
+    if ($unsafe_email != $email)
+        $error = "Email enthält nicht erlaubte Zeichen.";
+    if ($unsafe_username != $username)
+        $error = "Username enthält nicht erlaubte Zeichen.";
+    if ($password != $password2)
+        $error = "Passwörter stimmen nicht überein.";
+    if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = "Inkorrektes E-Mail Format";
+    }
+
+    if (empty($error)) {
+        $conn = getConnection();
+        $conn->exec("INSERT INTO `users`(`username`, `password`, `email`) VALUES ('" . $username . "','" . hash_hmac("sha512", $password, "FJk!br!5") . "','" . $email . "')");
+        $conn = null;
+        login($username);
+    }
 }
 ?>
 
@@ -44,11 +66,9 @@ if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
             <input type="password" name="password2" id="password2">
         </div>
         <div>
-            <label for="agree">
-                <input type="checkbox" name="agree" id="agree" value="yes"/> I agree
-                with the
-                <a href="#" title="term of services">term of services</a>
-            </label>
+        <?php
+        if (! empty($error))
+            echo "<p>" . utf8_encode($error) . "</p>"?>
         </div>
         <button type="submit">Register</button>
         <footer>Already a member? <a href="login.php">Login here</a></footer>
@@ -56,15 +76,3 @@ if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
 </main>
 </body>
 </html>
-
-
-<?php
-
-function sanitize_input($data)
-{
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    return $data;
-}
-?>

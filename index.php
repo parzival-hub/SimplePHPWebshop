@@ -1,10 +1,6 @@
 <?php
+include 'functions.php';
 session_start();
-
-$sql = new PDO('mysql:host=127.0.0.1;dbname=xiks5egieksn6c6a;charset=utf8mb4', 'rm3AER5PkBnnEiTg', 'aS7HFRb94!@t3LTR', array(
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_PERSISTENT => false
-));
 
 if (array_key_exists('valid', $_SESSION) && $_SESSION["valid"])
     $loggedIn = true;
@@ -40,12 +36,36 @@ else
 
 <body>
 <main>
+
 <?php
 if ($loggedIn)
     echo "<h1>Willkommen, " . $_SESSION["username"] . "</h1>";
 else
     echo "<h1>Du bist nicht eingeloggt</h1>";
 ?>
+
+ <form method="GET" action="<?php
+echo htmlspecialchars($_SERVER["PHP_SELF"]);
+?>">
+  <input type="search" id="suche" name="s" placeholder="Suche nach produkten...">
+  <button>Search</button>
+</form>
+
+<div class="grid-container">
+<?php
+// init suchparameter
+if (isset($_GET["s"]) && ! empty($_GET["s"]))
+    $search_param = $_GET["s"];
+else
+    $search_param = "";
+
+$results = search($search_param);
+foreach ($results as $item) {
+    $imageHTML = '<img src=' . $item["image_path"] . '></img>';
+    echo '<div class="grid-item"><p>' . $item['name'] . '</p>' . $imageHTML . $item['description'] . '</div>';
+}
+?>
+</div>
 </main>
 </body>
 </html>

@@ -1,4 +1,5 @@
 <?php
+include 'functions.php';
 session_start();
 // error_reporting(E_ERROR | E_PARSE);
 //
@@ -23,27 +24,29 @@ if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
     if ($name != $unsafe_name)
         $error = "Dieser Name ist nicht erlaubt.";
 
-    if (empty($error) && login($name, $pass)) {
-        // echo $name . " " . $pass;
-        $_SESSION["username"] = $name;
-        $_SESSION["valid"] = true;
-        header('Location: index.php', true, 301);
-        exit();
+    if (empty($error)) {
+        if (loginAllowed($name, $pass))
+            login($name);
+        else
+            $error = "Benutzername und Passwort stimmen nicht überein.";
     }
 }
 
-function login($username, $password)
+function loginAllowed($username, $clear_password)
 {
-    $pass = hash_hmac("sha512", $password, "FJk!br!5");
-    return true;
-}
+    $password = hash_hmac("sha512", $clear_password, "FJk!br!5");
+    $conn = getConnection();
 
-function sanitize_input($data)
-{
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    return $data;
+    $sql = "SELECT * FROM `users` WHERE `username`=? AND `password`=?";
+    $query = $conn->prepare($sql);
+    $query->bindValue(1, $username);
+    $query->bindValue(2, $password);
+    $query->execute();
+
+    if ($query->rowCount() == 1)
+        return true;
+    else
+        return false;
 }
 ?>
 
@@ -72,7 +75,7 @@ function sanitize_input($data)
         </div>
         <?php
         if (! empty($error))
-            echo utf8_encode($error);
+            echo "<p style=\"color:red\">" . utf8_encode($error) . "</p>";
         ?>
         <section>
             <button type="submit">Login</button>
