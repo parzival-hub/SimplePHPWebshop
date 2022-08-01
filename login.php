@@ -17,7 +17,7 @@ if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
     $pass = $_POST["password"];
 
     if (empty($unsafe_name) || empty($pass))
-        $error = "Alle Felder müssen ausgefüllt werden.";
+        $error = "Alle Felder mï¿½ssen ausgefï¿½llt werden.";
 
     $name = sanitize_input($unsafe_name);
 
@@ -28,7 +28,7 @@ if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
         if (loginAllowed($name, $pass))
             login($name);
         else
-            $error = "Benutzername und Passwort stimmen nicht überein.";
+            $error = "Benutzername und Passwort stimmen nicht ï¿½berein.";
     }
 }
 
@@ -56,15 +56,19 @@ function loginAllowed($username, $clear_password)
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <title>Login</title>
 </head>
 <body>
+
 <main>
+
     <form method="post" action="<?php
 
     echo htmlspecialchars($_SERVER["PHP_SELF"]);
     ?>">
         <h1>Login</h1>
+        
         <div>
             <label for="username">Username:</label>
             <input type="text" name="username" id="username">

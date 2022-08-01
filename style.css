@@ -1,4 +1,5 @@
 @charset "ISO-8859-1";
+
 :root {
     --primary: #7952b3;
     --secondary: #61428f;
@@ -10,7 +11,7 @@
     --link-color: #7952b3;
     --text-main: #363636;
     --text-bright: #000;
-    --body-bg-color: #f9fafb;
+    /*--body-bg-color: #f9fafb;*/
     --footer-bg-color: #fff;
     --form-bg-color: #fff;
     --input-text-color: #000;
@@ -40,7 +41,8 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
     font-size: 1rem;
     line-height: 1.25;
-    background-color: var(--body-bg-color);
+    background-image: url(images/background_haselnuts.jpg);
+    background-color: #cccccc00;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -52,14 +54,13 @@ body > header {
     display: flex;
     justify-content: center;
     padding: 0;
-    background-color: #fff;
 }
 body > header > nav {
     max-width: var(--max-width);
     flex: 1;
 }
 body > footer {
-    background-color: var(--footer-bg-color);
+    /*background-color: var(--footer-bg-color);*/
     border-top: 1px solid var(--border-color);
     width: 100%;
     margin-top: auto;
