@@ -8,10 +8,11 @@ function sanitize_input($data)
     return $data;
 }
 
-function login($name)
+function login($name, $role)
 {
     $_SESSION["username"] = $name;
     $_SESSION["valid"] = true;
+    $_SESSION["role"] = $role;
     header('Location: index.php', true, 301);
     exit();
 }
@@ -22,6 +23,27 @@ function getConnection()
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_PERSISTENT => false
     ));
+}
+
+function addProduct($productName, $productDesc, $productQuant, $productImage)
+{
+    $conn = getConnection();
+    $sql = "INSERT INTO `products`(`name`, `description`, `quantity`, `image_path`) VALUES (:name,:desc,:quant,:image)";
+    $query = $conn->prepare($sql);
+    $query->bindValue("name", $productName);
+    $query->bindValue("desc", $productDesc);
+    $query->bindValue("quant", $productQuant);
+    $query->bindValue("image", $productImage);
+    $query->execute();
+}
+
+function deleteProduct($productName)
+{
+    $conn = getConnection();
+    $sql = "DELETE FROM `products` WHERE `name`=:delParam";
+    $query = $conn->prepare($sql);
+    $query->bindValue("delParam", $productName);
+    $query->execute();
 }
 
 function search($searchParam)

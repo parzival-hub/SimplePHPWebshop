@@ -30,7 +30,7 @@ if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
 
     if (empty($error)) {
         $conn = getConnection();
-        $conn->exec("INSERT INTO `users`(`username`, `password`, `email`) VALUES ('" . $username . "','" . hash_hmac("sha512", $password, "FJk!br!5") . "','" . $email . "')");
+        $conn->exec("INSERT INTO `users`(`username`, `password`, `email`,`role`) VALUES ('" . $username . "','" . hash_hmac("sha512", $password, "FJk!br!5") . "','" . $email . "','user')");
         $conn = null;
         login($username);
     }

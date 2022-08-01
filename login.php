@@ -25,8 +25,9 @@ if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
         $error = "Dieser Name ist nicht erlaubt.";
 
     if (empty($error)) {
-        if (loginAllowed($name, $pass))
-            login($name);
+        $loginRole = loginAllowed($name, $pass);
+        if ($loginRole != "None")
+            login($name, $loginRole);
         else
             $error = "Benutzername und Passwort stimmen nicht �berein.";
     }
@@ -43,10 +44,10 @@ function loginAllowed($username, $clear_password)
     $query->bindValue(2, $password);
     $query->execute();
 
-    if ($query->rowCount() == 1)
-        return true;
-    else
-        return false;
+    if ($query->rowCount() == 1) {
+        return $query->fetch(PDO::FETCH_ASSOC)["role"];
+    } else
+        return "None";
 }
 ?>
 
@@ -68,7 +69,7 @@ function loginAllowed($username, $clear_password)
     echo htmlspecialchars($_SERVER["PHP_SELF"]);
     ?>">
         <h1>Login</h1>
-        
+
         <div>
             <label for="username">Username:</label>
             <input type="text" name="username" id="username">
