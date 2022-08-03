@@ -1,6 +1,11 @@
 <?php
 include 'functions.php';
 session_start();
+
+if (! isset($_SESSION["username"])) {
+    header('Location: login.php', true, 301);
+    exit();
+}
 ?>
 
 <head>
@@ -33,8 +38,8 @@ tr:nth-child(even) {
 </header>
 
 <form class ="w3-bar-item w3-right" method="GET" id="search" action="<?php
-    echo htmlspecialchars($_SERVER["PHP_SELF"]);
-    ?>">
+echo htmlspecialchars($_SERVER["PHP_SELF"]);
+?>">
  <div class="w3-center">
 	<input class="w3-input" type="search" id="suche" name="s" placeholder="Filter Produkte...">
 	<button class="w3-btn w3-bar-item w3-right w3-hide-medium w3-hover-white w3-padding-16" type="submit" form="search">Suchen</button>
@@ -49,14 +54,14 @@ tr:nth-child(even) {
     <th>Aktion</th>
   </tr>
 <?php
-    if (isset($_GET["s"]) && ! empty($_GET["s"]))
-        $search_param = sanitize_input($_GET["s"]);
-    else
-        $search_param = "";
+if (isset($_GET["s"]) && ! empty($_GET["s"]))
+    $search_param = sanitize_input($_GET["s"]);
+else
+    $search_param = "";
 
-    $results = searchCart($search_param, $_SESSION['username']);
-    foreach ($results as $item) {
-        echo '  <tr>
+$results = searchCart($search_param, $_SESSION['username']);
+foreach ($results as $item) {
+    echo '  <tr>
     <td>' . $item["name"] . '</td>
     <td>' . $item["description"] . '</td>
     <td>' . $item["quantity"] . '</td>
@@ -67,13 +72,16 @@ tr:nth-child(even) {
       </form>
 </td>
   </tr>';
-    }
+}
 
-    if (isset($_POST["delete"])){
+if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
+    if (isset($_POST["delete"])) {
         $deleteParam = sanitize_input($_POST["delete"]);
         deleteProductCart($deleteParam, $_SESSION["username"]);
         unset($_POST["delete"]);
         header("Refresh:0");
     }
-    ?>
+}
+
+?>
 </table>

@@ -2,7 +2,7 @@
 include 'functions.php';
 session_start();
 
-if (isset($_SESSION["role"]) && $_SESSION["role"] == 'admin' && $_SESSION["valid"] == true) {
+if (isset($_SESSION["role"]) && $_SESSION["role"] == 'admin') {
     ?>
 
 <html>

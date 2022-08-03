@@ -11,7 +11,6 @@ function sanitize_input($data)
 function login($name, $role)
 {
     $_SESSION["username"] = $name;
-    $_SESSION["valid"] = true;
     $_SESSION["role"] = $role;
     header('Location: index.php', true, 301);
     exit();
@@ -30,7 +29,7 @@ function addProduct($productName, $productDesc, $productQuant, $productImage)
     $conn = getConnection();
     $sql = "SELECT * FROM `products` WHERE `name` LIKE :searchq";
     $query = $conn->prepare($sql);
-    $query->bindValue("searchq", $productName );
+    $query->bindValue("searchq", $productName);
     $query->execute();
 
     $results = [];
@@ -39,7 +38,7 @@ function addProduct($productName, $productDesc, $productQuant, $productImage)
         array_push($results, $row);
     }
 
-    if(empty($results)){
+    if (empty($results)) {
         $sql = "INSERT INTO `products`(`name`, `description`, `quantity`, `image_path`) VALUES (:name,:desc,:quant,:image)";
         $query = $conn->prepare($sql);
         $query->bindValue("name", $productName);
@@ -47,13 +46,11 @@ function addProduct($productName, $productDesc, $productQuant, $productImage)
         $query->bindValue("quant", $productQuant);
         $query->bindValue("image", $productImage);
         $query->execute();
-    }
-    else{
+    } else {
         echo '<script type="text/javascript">
-        window.onload = function () { alert("Produkt existiert bereits!"); } 
-        </script>'; 
+        window.onload = function () { alert("Produkt existiert bereits!"); }
+        </script>';
     }
-
 }
 
 function deleteProduct($productName)
@@ -63,8 +60,6 @@ function deleteProduct($productName)
     $query = $conn->prepare($sql);
     $query->bindValue("delParam", $productName);
     $query->execute();
-
-    
 }
 
 function search($searchParam)
@@ -83,12 +78,12 @@ function search($searchParam)
     return $results;
 }
 
-function addToCart($productName, $username)
+function addToCart($productName, $quantity, $username)
 {
     $conn = getConnection();
-    $sql = "SELECT * FROM `products` WHERE `name` LIKE :searchq";
+    $sql = "SELECT * FROM `products` WHERE `name` = :searchq";
     $query = $conn->prepare($sql);
-    $query->bindValue("searchq", $productName );
+    $query->bindValue("searchq", $productName);
     $query->execute();
 
     $results = [];
@@ -96,36 +91,33 @@ function addToCart($productName, $username)
     while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
         array_push($results, $row);
     }
-    if(count($results) == 1){
-        $sql = "SELECT * FROM " . $_SESSION['username'] . " WHERE `name` LIKE :searchq";
+    if (count($results) == 1) {
+        $sql = "SELECT * FROM " . $_SESSION['username'] . " WHERE `name` = :searchq";
         $query = $conn->prepare($sql);
-        $query->bindValue("searchq", $productName );
+        $query->bindValue("searchq", $productName);
         $query->execute();
         $checking = [];
         while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
             array_push($checking, $row);
         }
-        //Falls Produkt nicht vorhanden, füge hinzu
-        if(empty($checking)){
-            $sql = "INSERT INTO " .$username . " (`name`, `description`, `quantity`, `image_path`) VALUES (:name,:desc,:quant,:image)";
+        // Falls Produkt nicht vorhanden, füge hinzu
+        if (empty($checking)) {
+            $sql = "INSERT INTO " . $username . " (`name`, `description`, `quantity`, `image_path`) VALUES (:name,:desc,:quant,:image)";
             $query2 = $conn->prepare($sql);
             $query2->bindValue("name", $productName);
             $query2->bindValue("desc", $results[0]["description"]);
-            $query2->bindValue("quant", 1);
+            $query2->bindValue("quant", $quantity);
             $query2->bindValue("image", $results[0]["image_path"]);
             $query2->execute();
-
-        }
-        //Falls Produkt schon vorhanden, erhöhe um 1
+        } // Falls Produkt schon vorhanden, erhöhe um 1
         else {
-            $sql = "UPDATE " .$username . " SET  quantity = quantity + 1 WHERE name LIKE :searchq";
+            $sql = "UPDATE " . $username . " SET  quantity = quantity + :quant WHERE name = :searchq";
             $query2 = $conn->prepare($sql);
             $query2->bindValue("searchq", $productName);
+            $query2->bindValue("quant", $quantity);
             $query2->execute();
+        }
     }
-}
-   
-    
 }
 
 function searchCart($searchParam, $username)

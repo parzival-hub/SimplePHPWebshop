@@ -2,7 +2,7 @@
 include 'functions.php';
 session_start();
 
-if (isset($_SESSION['valid']) && $_SESSION["valid"] && isset($_SESSION['username']) && isset($_SESSION['role']))
+if (isset($_SESSION['username']) && isset($_SESSION['role']))
     $loggedIn = true;
 else
     $loggedIn = false;
@@ -43,6 +43,7 @@ else
     <a class="w3-bar-item w3-button w3-hide-medium w3-hover-white w3-padding-16" href="javascript:void(0)" onclick="w3_show_nav('menuRef')">Produkt2</a>
     -->
     <?php
+
     if ($loggedIn)
         echo "<a class='w3-bar-item w3-right w3-button w3-hide-medium w3-hover-white w3-padding-16' href='logout.php'>Logout</a>";
     else
@@ -60,13 +61,12 @@ else
         <input class="w3-input" type="search" id="suche" name="s" placeholder="Suche nach Produkten...">
         </div>
     	</form>
-    <a class='w3-bar-item w3-right w3-button w3-hide-medium w3-hover-white w3-padding-16' href='cart.php'>Einkaufswagen</a>
-
-
-        <?php
-        if ($loggedIn)
-            echo "<h3>Willkommen, " . $_SESSION["username"] . "</h3>";
-        ?>
+            <?php
+            if ($loggedIn) {
+                echo "<a class='w3-bar-item w3-right w3-button w3-hide-medium w3-hover-white w3-padding-16' href='cart.php'><img src=images/shopping-cart.png width=70% height=70%></a>";
+                echo "<h3>Willkommen, " . $_SESSION["username"] . "</h3>";
+            }
+            ?>
         </div>
     <!--
    <div class="w3-content ">
@@ -92,10 +92,10 @@ else
       <img src="' . $item["image_path"] . '" alt="Avatar" style="width:80%">
       <div class="w3-section">
         <form class= "w3-bar-item w3-left" method="POST" id="addProductToCart" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">
-        <input class="w3-input" name="addCart" value="' . $item['name'] . '" style="display:none">
+        <input class="w3-input" name="product" value="' . $item['name'] . '" style="display:none">
+        <input style="width:25%" type="number" min=1 name="quantity" value="1">
         <button class="w3-button w3-green">Kaufen</button>
-        </form>
-        <button class="w3-button w3-red">Mehr Infos</button>
+        <button class="w3-button w3-red">Mehr Infos</button> </form>
       </div>
     </div> </div>';
         // echo '<div class="grid-item"><p>' . $item['name'] . '</p>' . $imageHTML . $item['description'] . '</div>';
@@ -126,10 +126,18 @@ function carousel() {
 
 <?php
 
-//Hinzufügen des Produktes zum Einkaufswagen
-if (isset($_POST["addCart"])) {
-    $cartParam = sanitize_input($_POST["addCart"]);
-    addToCart($cartParam, $_SESSION["username"]);
+// Hinzufügen des Produktes zum Einkaufswagen
+if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
+    if (isset($_POST["product"])) {
+        if (! isset($_SESSION["username"]))
+            header('Location: login.php', true, 301);
+        else {
+            $product = sanitize_input($_POST["product"]);
+            $quantity = sanitize_input($_POST["quantity"]);
+            if (is_numeric($quantity) && $quantity > 0)
+                addToCart($product, $quantity, $_SESSION["username"]);
+        }
+    }
 }
 ?>
 

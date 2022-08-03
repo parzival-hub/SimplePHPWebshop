@@ -6,7 +6,7 @@ session_start();
 $error = "";
 
 // Redirect zum login
-if (array_key_exists('valid', $_SESSION) && $_SESSION["valid"]) {
+if (isset($_SESSION["username"])) {
     header('Location: index.php', true, 301);
     exit();
 }
