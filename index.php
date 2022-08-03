@@ -43,10 +43,8 @@ else
     <a class="w3-bar-item w3-button w3-hide-medium w3-hover-white w3-padding-16" href="javascript:void(0)" onclick="w3_show_nav('menuRef')">Produkt2</a>
     -->
     <?php
-
     if ($loggedIn)
         echo "<a class='w3-bar-item w3-right w3-button w3-hide-medium w3-hover-white w3-padding-16' href='logout.php'>Logout</a>";
-
     else
         echo "<a class='w3-bar-item w3-right w3-button w3-hide-medium w3-hover-white w3-padding-16' href='login.php'>Login</a>";
 
@@ -62,6 +60,7 @@ else
         <input class="w3-input" type="search" id="suche" name="s" placeholder="Suche nach Produkten...">
         </div>
     	</form>
+    <a class='w3-bar-item w3-right w3-button w3-hide-medium w3-hover-white w3-padding-16' href='cart.php'>Einkaufswagen</a>
 
 
         <?php
@@ -92,7 +91,10 @@ else
       <h3>' . $item["name"] . '</h3>
       <img src="' . $item["image_path"] . '" alt="Avatar" style="width:80%">
       <div class="w3-section">
+        <form class= "w3-bar-item w3-left" method="POST" id="addProductToCart" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">
+        <input class="w3-input" name="addCart" value="' . $item['name'] . '" style="display:none">
         <button class="w3-button w3-green">Kaufen</button>
+        </form>
         <button class="w3-button w3-red">Mehr Infos</button>
       </div>
     </div> </div>';
@@ -121,5 +123,14 @@ function carousel() {
 }
 </script>
 -->
+
+<?php
+
+//Hinzufügen des Produktes zum Einkaufswagen
+if (isset($_POST["addCart"])) {
+    $cartParam = sanitize_input($_POST["addCart"]);
+    addToCart($cartParam, $_SESSION["username"]);
+}
+?>
 
 </body>
