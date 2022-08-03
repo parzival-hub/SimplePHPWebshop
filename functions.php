@@ -28,13 +28,32 @@ function getConnection()
 function addProduct($productName, $productDesc, $productQuant, $productImage)
 {
     $conn = getConnection();
-    $sql = "INSERT INTO `products`(`name`, `description`, `quantity`, `image_path`) VALUES (:name,:desc,:quant,:image)";
+    $sql = "SELECT * FROM `products` WHERE `name` LIKE :searchq";
     $query = $conn->prepare($sql);
-    $query->bindValue("name", $productName);
-    $query->bindValue("desc", $productDesc);
-    $query->bindValue("quant", $productQuant);
-    $query->bindValue("image", $productImage);
+    $query->bindValue("searchq", $productName );
     $query->execute();
+
+    $results = [];
+    // Parse returned data, and displays them
+    while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+        array_push($results, $row);
+    }
+
+    if(empty($results)){
+        $sql = "INSERT INTO `products`(`name`, `description`, `quantity`, `image_path`) VALUES (:name,:desc,:quant,:image)";
+        $query = $conn->prepare($sql);
+        $query->bindValue("name", $productName);
+        $query->bindValue("desc", $productDesc);
+        $query->bindValue("quant", $productQuant);
+        $query->bindValue("image", $productImage);
+        $query->execute();
+    }
+    else{
+        echo '<script type="text/javascript">
+        window.onload = function () { alert("Produkt existiert bereits!"); } 
+        </script>'; 
+    }
+
 }
 
 function deleteProduct($productName)
@@ -44,6 +63,8 @@ function deleteProduct($productName)
     $query = $conn->prepare($sql);
     $query->bindValue("delParam", $productName);
     $query->execute();
+
+    
 }
 
 function search($searchParam)
