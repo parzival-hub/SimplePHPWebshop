@@ -28,11 +28,20 @@ if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
     }
     $creationsql= "CREATE TABLE " . $username . " (name VARCHAR(255) NOT NULL, quantity INT(3), description VARCHAR(500) NOT NULL, image_path VARCHAR(100))";
     if (empty($error)) {
-        $conn = getConnection();
-        $conn->exec("INSERT INTO `users`(`username`, `password`, `email`,`role`) VALUES ('" . $username . "','" . hash_hmac("sha512", $password, "FJk!br!5") . "','" . $email . "','user')");
-        $conn->exec($creationsql);
-        $conn = null;
-        login($username,'user');
+        if (checkUserDatabank($username)){
+            $conn = getConnection();
+            $conn->exec("INSERT INTO `users`(`username`, `password`, `email`,`role`) VALUES ('" . $username . "','" . hash_hmac("sha512", $password, "FJk!br!5") . "','" . $email . "','user')");
+            $conn->exec($creationsql);
+            $conn = null;
+            login($username,'user');
+        }
+        else{
+            echo '<script type="text/javascript">
+        window.onload = function () { alert("Benutzername existiert bereits!"); }
+        </script>';
+
+        }
+        
     }
 }
 ?>

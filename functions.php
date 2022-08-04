@@ -144,3 +144,23 @@ function deleteProductCart($productName, $username)
     $query->bindValue("delParam", $productName);
     $query->execute();
 }
+
+//Falls User noch nicht vorhanden ist, gib true zurück
+function checkUserDatabank($userName){
+    $conn = getConnection();
+    $sql = "SELECT * FROM users WHERE `username`=:userParam";
+    $query = $conn->prepare($sql);
+    $query->bindValue("userParam", $userName);
+    $query->execute();
+    $checking = [];
+    while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+        array_push($checking, $row);
+    }
+    if(empty($checking)){
+        return true;
+    }
+    else{
+        return false;
+    }
+
+}
