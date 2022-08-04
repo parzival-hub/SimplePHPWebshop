@@ -91,14 +91,14 @@ else
       <h3>' . $item["name"] . '</h3>
       <img src="' . $item["image_path"] . '" alt="Avatar" style="width:80%">
       <div class="w3-section">
-        <form class= "w3-bar-item w3-left" method="POST" id="addProductToCart" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">
-        <input class="w3-input" name="product" value="' . $item['name'] . '" style="display:none">
-        <input style="width:25%" type="number" min=1 name="quantity" value="1">
-        <button class="w3-button w3-green">Kaufen</button>
-        <button class="w3-button w3-red">Mehr Infos</button> </form>
+        <form class= "w3-bar-item w3-center" method="POST" id="addProductToCart" action="' . sanitize_input($_SERVER["PHP_SELF"]) . '">
+        <input name="product" value="' . $item['name'] . '" style="display:none">
+        <input style="width:25%;height:36px" type="number" min=1 name="quantity" value="1">
+        <button class="w3-button w3-green">Kaufen</button></form>
+        <a href=product.php?p=' . $item['name'] . '><button class="w3-button w3-red" style="width:70%; margin-top:5px">Mehr Infos</button></a>
       </div>
-    </div> </div>';
-        // echo '<div class="grid-item"><p>' . $item['name'] . '</p>' . $imageHTML . $item['description'] . '</div>';
+    </div>
+</div>';
     }
     ?>
 

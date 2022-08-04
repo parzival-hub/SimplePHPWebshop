@@ -5,6 +5,7 @@ function sanitize_input($data)
     $data = trim($data);
     $data = stripslashes($data);
     $data = htmlspecialchars($data);
+    $data = str_replace("%", "", $data);
     return $data;
 }
 
@@ -145,8 +146,9 @@ function deleteProductCart($productName, $username)
     $query->execute();
 }
 
-//Falls User noch nicht vorhanden ist, gib true zurück
-function checkUserDatabank($userName){
+// Falls User noch nicht vorhanden ist, gib true zurück
+function checkUserDatabank($userName)
+{
     $conn = getConnection();
     $sql = "SELECT * FROM users WHERE `username`=:userParam";
     $query = $conn->prepare($sql);
@@ -156,11 +158,9 @@ function checkUserDatabank($userName){
     while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
         array_push($checking, $row);
     }
-    if(empty($checking)){
+    if (empty($checking)) {
         return true;
-    }
-    else{
+    } else {
         return false;
     }
-
 }
