@@ -57,7 +57,7 @@ tr:nth-child(even) {
 	<button class="w3-btn w3-bar-item w3-right w3-hide-medium w3-hover-white w3-padding-16" type="submit" form="search">Suchen</button>
 </div>
 </form>
-
+ 
 <table>
   <tr>
     <th>Name</th>
@@ -113,7 +113,7 @@ tr:nth-child(even) {
 
 <?php
     if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
-        // Hinzufügen von Produkten
+        // Hinzufï¿½gen von Produkten
         if (isset($_POST["add"])) {
             $addParam = sanitize_input($_POST["add"]);
             if ($addParam == "true") {
@@ -124,7 +124,7 @@ tr:nth-child(even) {
                 addProduct($name, $desc, $quantity, $image_path);
                 header("Refresh:0");
             }
-        } // Löschen von Produkten
+        } // Lï¿½schen von Produkten
         else if (isset($_POST["delete"])) {
             $deleteParam = sanitize_input($_POST["delete"]);
             deleteProduct($deleteParam);
