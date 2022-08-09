@@ -18,11 +18,11 @@ if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
     $password2 = $_POST["password2"];
 
     if ($unsafe_email != $email)
-        $error = "Email enth�lt nicht erlaubte Zeichen.";
+        $error = "Email enthält nicht erlaubte Zeichen.";
     if ($unsafe_username != $username)
-        $error = "Username enth�lt nicht erlaubte Zeichen.";
+        $error = "Username enthält nicht erlaubte Zeichen.";
     if ($password != $password2)
-        $error = "Passw�rter stimmen nicht �berein.";
+        $error = "Passwörter stimmen nicht überein.";
     if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = "Inkorrektes E-Mail Format";
     }

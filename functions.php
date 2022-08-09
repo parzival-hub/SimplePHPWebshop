@@ -79,6 +79,22 @@ function search($searchParam)
     return $results;
 }
 
+function searchUser($searchParam){
+    $conn = getConnection();
+    $sql = "SELECT * FROM `users` WHERE `username` LIKE :searchq";
+    $query = $conn->prepare($sql);
+    $query->bindValue("searchq", "%" . $searchParam . "%");
+    $query->execute();
+
+    $results = [];
+    // Parse returned data, and displays them
+    while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+        array_push($results, $row);
+    }
+    return $results;
+
+}
+
 function addToCart($productName, $quantity, $username)
 {
     $conn = getConnection();
@@ -163,4 +179,17 @@ function checkUserDatabank($userName)
     } else {
         return false;
     }
+}
+
+function deleteUser($username)
+{
+    $conn = getConnection();
+    $sql = "DELETE FROM users WHERE `username`=:delParam";
+    $query = $conn->prepare($sql);
+    $query->bindValue("delParam", $username);
+    $query->execute();
+    $sql = "DROP TABLE " . $username;
+    $query = $conn->prepare($sql);
+    $query->execute();
+
 }
