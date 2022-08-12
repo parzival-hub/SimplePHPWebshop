@@ -13,7 +13,7 @@ function login($name, $role)
 {
     $_SESSION["username"] = $name;
     $_SESSION["role"] = $role;
-    header('Location: index.php', true, 301);
+    echo "<script>window.location.assign('index.php');</script>";
     exit();
 }
 
@@ -28,7 +28,7 @@ function getConnection()
 function addProduct($productName, $productDesc, $productQuant, $productImage)
 {
     $conn = getConnection();
-    $sql = "SELECT * FROM `products` WHERE `name` LIKE :searchq";
+    $sql = "SELECT * FROM `products` WHERE `name` = :searchq";
     $query = $conn->prepare($sql);
     $query->bindValue("searchq", $productName);
     $query->execute();
@@ -63,6 +63,18 @@ function deleteProduct($productName)
     $query->execute();
 }
 
+function getProduct($productName)
+{
+    $conn = getConnection();
+    $sql = "SELECT * FROM `products` WHERE `name` =:searchq";
+    $query = $conn->prepare($sql);
+    $query->bindValue("searchq", $productName);
+    $query->execute();
+
+    $row = $query->fetch(PDO::FETCH_ASSOC);
+    return $row;
+}
+
 function search($searchParam)
 {
     $conn = getConnection();
@@ -79,7 +91,8 @@ function search($searchParam)
     return $results;
 }
 
-function searchUser($searchParam){
+function searchUser($searchParam)
+{
     $conn = getConnection();
     $sql = "SELECT * FROM `users` WHERE `username` LIKE :searchq";
     $query = $conn->prepare($sql);
@@ -92,7 +105,6 @@ function searchUser($searchParam){
         array_push($results, $row);
     }
     return $results;
-
 }
 
 function addToCart($productName, $quantity, $username)
@@ -109,6 +121,7 @@ function addToCart($productName, $quantity, $username)
         array_push($results, $row);
     }
     if (count($results) == 1) {
+
         $sql = "SELECT * FROM " . $_SESSION['username'] . " WHERE `name` = :searchq";
         $query = $conn->prepare($sql);
         $query->bindValue("searchq", $productName);
@@ -119,6 +132,9 @@ function addToCart($productName, $quantity, $username)
         }
         // Falls Produkt nicht vorhanden, füge hinzu
         if (empty($checking)) {
+            $max_quant = $results[0]["quantity"];
+            if ($quantity > $max_quant)
+                $quantity = $max_quant;
             $sql = "INSERT INTO " . $username . " (`name`, `description`, `quantity`, `image_path`) VALUES (:name,:desc,:quant,:image)";
             $query2 = $conn->prepare($sql);
             $query2->bindValue("name", $productName);
@@ -126,8 +142,11 @@ function addToCart($productName, $quantity, $username)
             $query2->bindValue("quant", $quantity);
             $query2->bindValue("image", $results[0]["image_path"]);
             $query2->execute();
-        } // Falls Produkt schon vorhanden, erhöhe um 1
+        } // Falls Produkt schon vorhanden, erhöhe um quant
         else {
+            $max_quant = $results[0]["quantity"] - $checking[0]["quantity"];
+            if ($quantity > $max_quant)
+                $quantity = $max_quant;
             $sql = "UPDATE " . $username . " SET  quantity = quantity + :quant WHERE name = :searchq";
             $query2 = $conn->prepare($sql);
             $query2->bindValue("searchq", $productName);
@@ -191,7 +210,6 @@ function deleteUser($username)
     $sql = "DROP TABLE " . $username;
     $query = $conn->prepare($sql);
     $query->execute();
-
 }
 
 function changeUser($username, $changeParam, $changePlace ){

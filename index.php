@@ -18,6 +18,19 @@ else
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="shortcut icon" type="image/ico" href="favicon.ico"/>
     <title>This is NUTS</title>
+<style>
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  padding: 10px;
+}
+.grid-item {
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  font-size: 30px;
+  text-align: center;
+}
+</style>
 </head>
 
 <body>
@@ -37,11 +50,7 @@ else
     <a href="index.php">
             <img src="images/nuts_logo.png" alt="ThisIsNutsLogo" width="70" height="60">
         </a>
-    <!--
-    <a class="w3-bar-item w3-button w3-left w3-hide-large w3-hover-white w3-large w3-theme w3-padding-16" href="javascript:void(0)" onclick="w3_open()">☰</a>
-    <a class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white w3-padding-16" href="javascript:void(0)" onclick="w3_show_nav('menuTut')">Produkt1</a>
-    <a class="w3-bar-item w3-button w3-hide-medium w3-hover-white w3-padding-16" href="javascript:void(0)" onclick="w3_show_nav('menuRef')">Produkt2</a>
-    -->
+
     <?php
 
     if ($loggedIn)
@@ -64,19 +73,12 @@ else
             <?php
             if ($loggedIn) {
                 echo "<a class='w3-bar-item w3-right w3-button w3-hide-medium w3-hover-white w3-padding-16' href='cart.php'><img src=images/shopping-cart.png width=70% height=70%></a>";
-                echo "<h3>Willkommen, " . $_SESSION["username"] . "</h3>";
+                // echo "<h3>Willkommen, " . $_SESSION["username"] . "</h3>";
             }
             ?>
         </div>
-    <!--
-   <div class="w3-content ">
-    <img class="slideshow" src="images/slideshow_1.jpg" style="max-width: 200px;height: 100px;">
-    <img class="slideshow" src="images/slideshow_2.jpg" style="max-width: 200px;height: 100px;">
-    <img class="slideshow" src="images/slideshow_3.jpg" style="max-width: 200px;height: 100px;">
-    <img class="slideshow" src="images/slideshow_4.jpg"style="max-width: 200px; height: 100px;">
-    </div>
--->
-<div class="w3-container">
+
+<div class="grid-container">
 
     <?php
     // init suchparameter
@@ -87,16 +89,17 @@ else
 
     $results = search($search_param);
     foreach ($results as $item) {
-        echo '<div class="w3-card w3-hover-shadow" style="width:20%"><div class="w3-container w3-center">
+        echo '<div class="w3-container w3-center">
       <h3>' . $item["name"] . '</h3>
-      <img src="' . $item["image_path"] . '" alt="Avatar" style="width:80%">
+      <a href=product_details.php?p=' . $item['name'] . '> <img src="' . $item["image_path"] . '" alt="Avatar" style="width:80%"></a>
       <div class="w3-section">
+        ' . $item["quantity"] . ' auf Lager
         <form class= "w3-bar-item w3-center" method="POST" id="addProductToCart" action="' . sanitize_input($_SERVER["PHP_SELF"]) . '">
         <input name="product" value="' . $item['name'] . '" style="display:none">
-        <input style="width:25%;height:36px" type="number" min=1 name="quantity" value="1">
-        <button class="w3-button w3-green">Kaufen</button></form>
-        <a href=product.php?p=' . $item['name'] . '><button class="w3-button w3-red" style="width:70%; margin-top:5px">Mehr Infos</button></a>
-      </div>
+        <input style="width:10%;height:36px" type="number" min=1 name="quantity" value="1">
+        <button class="w3-button w3-green">Kaufen</button></form >
+        <a href=product_details.php?p=' . $item['name'] . '><button class="w3-button w3-red" style="width:40%; margin-top:5px">Mehr Infos</button></a>
+
     </div>
 </div>';
     }
@@ -105,40 +108,24 @@ else
 
 
 </div>
-<!--
-<script>
-var myIndex = 0;
-carousel();
 
-function carousel() {
-  var i;
-  var x = document.getElementsByClassName("slideshow");
-  for (i = 0; i < x.length; i++) {
-    x[i].style.display = "none";
-  }
-  myIndex++;
-  if (myIndex > x.length) {myIndex = 1}
-  x[myIndex-1].style.display = "block";
-  setTimeout(carousel, 2000); // Change image every 2 seconds
-}
-</script>
--->
 
 <?php
 
-// Hinzufügen des Produktes zum Einkaufswagen
+// HinzufÃ¼gen des Produktes zum Einkaufswagen
 if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
     if (isset($_POST["product"])) {
-        if (! isset($_SESSION["username"]))
-            header('Location: login.php', true, 301);
-        else {
+        if (isset($_SESSION["username"])) {
             $product = sanitize_input($_POST["product"]);
             $quantity = sanitize_input($_POST["quantity"]);
             if (is_numeric($quantity) && $quantity > 0)
                 addToCart($product, $quantity, $_SESSION["username"]);
+        } else {
+            echo "<script>window.location.assign('login.php');</script>";
+            die();
         }
     }
 }
 ?>
-
+<!-- Hier werdet ihr nichts finden... -->
 </body>

@@ -2,16 +2,17 @@
 include 'functions.php';
 session_start();
 
-if (isset($_SESSION['valid']) && $_SESSION["valid"] && isset($_SESSION['username']) && isset($_SESSION['role']))
+if (isset($_SESSION['username']) && isset($_SESSION['role']))
     $loggedIn = true;
 else
     $loggedIn = false;
 
 /*
-if (isset($_POST["showProductInfo"])){
-    $itemParam = sanitize_input($_POST["showProductInfo"]);
-    $productInfos = showProductInfo($itemParam);   
-}*/
+ * if (isset($_POST["showProductInfo"])){
+ * $itemParam = sanitize_input($_POST["showProductInfo"]);
+ * $productInfos = showProductInfo($itemParam);
+ * }
+ */
 ?>
 
 <!DOCTYPE html>
@@ -43,7 +44,17 @@ if (isset($_POST["showProductInfo"])){
     <a href="index.php">
             <img src="images/nuts_logo.png" alt="ThisIsNutsLogo" width="70" height="60">
         </a>
-
+<div class=w3-center>
 <?php
-echo "<h1>". $productInfos["name"] . "</h1";
+$productName = sanitize_input($_GET["p"]);
+$productDetails = getProduct($productName);
+if ($productDetails != NULL) {
+    echo "<h1>" . $productName . "</h1>";
+    echo "<p>" . $productDetails["quantity"] . " auf Lager</p>";
+    echo "<img src=" . $productDetails["image_path"] . ">";
+    echo "<p>" . $productDetails["description"] . "<p>";
+} else {
+    echo "Fehler: Produkt nicht gefunden";
+}
 ?>
+</div>

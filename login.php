@@ -7,8 +7,8 @@ $error = "";
 
 // Redirect zum login
 if (isset($_SESSION["username"])) {
-    header('Location: index.php', true, 301);
-    exit();
+    // echo "<script>window.location.assign('index.php');</script>";
+    // exit();
 }
 
 // Bearbeiten des Requests
@@ -29,7 +29,7 @@ if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
         if ($loginRole != "None")
             login($name, $loginRole);
         else
-            $error = "Benutzername und Passwort stimmen nicht ï¿½berein.";
+            $error = "Benutzername und Passwort stimmen nicht überein.";
     }
 }
 
