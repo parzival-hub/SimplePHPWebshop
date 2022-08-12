@@ -1,5 +1,6 @@
 <?php
 include 'functions.php';
+error_reporting(E_ERROR | E_PARSE);
 session_start();
 if (isset($_SESSION["role"]) && $_SESSION["role"] == 'admin') {
     ?>
@@ -51,7 +52,7 @@ tr:nth-child(even) {
 	<input  type="text"  name="Name" placeholder="Name">
 	<input type="text" name="Description" placeholder="Description">
 	<input  type="text"  name="Quantity" placeholder="Quantity">
-	<input type="text"  name="Image_Path" placeholder="Image_Path">
+	<input type="text" id="add_image_path"  name="Image_Path" placeholder="Image_Path">
 	<button class="w3-btn w3-hide-medium w3-padding-16" type="submit" form="add_product">Add</button>
 
 </form>
@@ -191,7 +192,7 @@ tr:nth-child(even) {
         // Check if $uploadOk is set to 0 by an error
         if ($uploadOk) {
             if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-                echo "<p style='color:green'>The file " . $uploadFileName . " has been uploaded to /webshop/uploads/" . $uploadFileName . "</p>";
+                echo "<p class='w3-center' style='color:green'>The file " . $uploadFileName . " has been uploaded to /webshop/uploads/" . $uploadFileName . "</p>";
             } else {
                 echo "Sorry, there was an error uploading your file.";
             }

@@ -1,7 +1,7 @@
 <?php
 include 'functions.php';
 session_start();
-
+error_reporting(E_ERROR | E_PARSE);
 if (isset($_SESSION['username']) && isset($_SESSION['role']))
     $loggedIn = true;
 else
@@ -61,6 +61,11 @@ else
     if (isset($_SESSION["role"]) && $_SESSION["role"] == "admin")
         echo "<a class='w3-bar-item w3-right w3-button w3-hide-medium w3-hover-white w3-padding-16' href='admin.php'>Admin</a>";
 
+    if ($loggedIn) {
+        echo "<a class='w3-bar-item w3-right w3-button w3-hide-medium w3-hover-white w3-padding-16' href='cart.php'><img src=images/shopping-cart.png width=70% height=70%></a>";
+        echo "<a class='w3-bar-item w3-right w3-button w3-hide-medium w3-hover-white w3-padding-16' href='user_profile.php'><img src=images/user.png width=70% height=70%></a>";
+        // echo "<h3>Willkommen, " . $_SESSION["username"] . "</h3>";
+    }
     ?>
     <button class="w3-btn w3-bar-item w3-right w3-hide-medium w3-hover-white w3-padding-16" type="submit" form="searchform">Suchen</button>
     <form class ="w3-bar-item w3-right" method="GET" id="searchform" action="<?php
@@ -70,12 +75,7 @@ else
         <input class="w3-input" type="search" id="suche" name="s" placeholder="Suche nach Produkten...">
         </div>
     	</form>
-            <?php
-            if ($loggedIn) {
-                echo "<a class='w3-bar-item w3-right w3-button w3-hide-medium w3-hover-white w3-padding-16' href='cart.php'><img src=images/shopping-cart.png width=70% height=70%></a>";
-                // echo "<h3>Willkommen, " . $_SESSION["username"] . "</h3>";
-            }
-            ?>
+
         </div>
 
 <div class="grid-container">

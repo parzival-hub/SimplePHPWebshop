@@ -1,7 +1,7 @@
 <?php
 include 'functions.php';
 session_start();
-
+error_reporting(E_ERROR | E_PARSE);
 if (isset($_SESSION["role"]) && $_SESSION["role"] == 'admin') {
     ?>
 
@@ -54,7 +54,7 @@ tr:nth-child(even) {
     	<input type="text" name="username" id="username" placeholder= "Neuer Username" >
     	<input name= "change" value = "<?php
 
-echo $user;
+    echo $user;
     ?>" style="display:none">
     	<button class="w3-btn w3-bar-item w3-hide-medium w3-hover-white w3-padding-16" type="submit" form="username">Ändern</button>
     </form>
@@ -65,7 +65,7 @@ echo $user;
     	<input type="text" name="email" id="email" placeholder= "Neue E-Mail" >
    		<input name= "change" value = "<?php
 
-echo $user;
+    echo $user;
     ?>" style="display:none">
     	<button class="w3-btn w3-bar-item w3-hide-medium w3-hover-white w3-padding-16" type="submit" form="email">Ändern</button>
     </form>
@@ -76,7 +76,7 @@ echo $user;
     	<input type="text" name="password" id="password" placeholder= "Neues Passwort" >
     	<input name= "change" value = "<?php
 
-echo $user;
+    echo $user;
     ?>" style="display:none">
     	<button class="w3-btn w3-bar-item w3-hide-medium w3-hover-white w3-padding-16" type="submit" form="password">Ändern</button>
 	</form>
@@ -91,8 +91,7 @@ echo $user;
                 $user = sanitize_input($_POST["change"]);
                 changeUser($user, $email, "email");
                 // header('Location: admin_users.php', true, 301);
-            }
-            else if (isset($_POST["username"])) {
+            } else if (isset($_POST["username"])) {
                 $username = sanitize_input($_POST["username"]);
                 $user = sanitize_input($_POST["change"]);
                 changeUser($user, $username, "username");

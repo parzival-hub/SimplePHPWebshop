@@ -1,14 +1,14 @@
 <?php
 include 'functions.php';
 session_start();
-// error_reporting(E_ERROR | E_PARSE);
+error_reporting(E_ERROR | E_PARSE);
 //
 $error = "";
 
 // Redirect zum login
 if (isset($_SESSION["username"])) {
-    // echo "<script>window.location.assign('index.php');</script>";
-    // exit();
+    echo "<script>window.location.assign('index.php');</script>";
+    exit();
 }
 
 // Bearbeiten des Requests

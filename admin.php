@@ -1,7 +1,7 @@
 <?php
 include 'functions.php';
 session_start();
-
+error_reporting(E_ERROR | E_PARSE);
 if (isset($_SESSION["role"]) && $_SESSION["role"] == 'admin') {
     ?>
 
@@ -40,16 +40,15 @@ tr:nth-child(even) {
   <a class='w3-bar-item w3-button w3-hover-white' href='admin_users.php'>Benutzer</a>
   <a class='w3-bar-item w3-button w3-hover-white' href='admin_products.php'>Produkte</a>
 
-  
+
 </div>
 <div>
   <h1 class= w3-display-middle> Admin Section </h1>
 </div>
 
 <?php
-}
-else {
-  ?>
+} else {
+    ?>
     <html>
     <body>
     <main>

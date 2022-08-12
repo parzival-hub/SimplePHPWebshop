@@ -1,7 +1,7 @@
 <?php
 session_start();
 include 'functions.php';
-
+error_reporting(E_ERROR | E_PARSE);
 // Redirect zum login
 if (array_key_exists('valid', $_SESSION) && $_SESSION["valid"]) {
     header('Location: index.php', true, 301);
@@ -26,22 +26,19 @@ if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
     if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = "Inkorrektes E-Mail Format";
     }
-    $creationsql= "CREATE TABLE " . $username . " (name VARCHAR(255) NOT NULL, quantity INT(3), description VARCHAR(500) NOT NULL, image_path VARCHAR(100))";
+    $creationsql = "CREATE TABLE " . $username . " (name VARCHAR(255) NOT NULL, quantity INT(3), description VARCHAR(500) NOT NULL, image_path VARCHAR(100))";
     if (empty($error)) {
-        if (checkUserDatabank($username)){
+        if (checkUserDatabank($username)) {
             $conn = getConnection();
             $conn->exec("INSERT INTO `users`(`username`, `password`, `email`,`role`) VALUES ('" . $username . "','" . hash_hmac("sha512", $password, "FJk!br!5") . "','" . $email . "','user')");
             $conn->exec($creationsql);
             $conn = null;
-            login($username,'user');
-        }
-        else{
+            login($username, 'user');
+        } else {
             echo '<script type="text/javascript">
         window.onload = function () { alert("Benutzername existiert bereits!"); }
         </script>';
-
         }
-        
     }
 }
 ?>
