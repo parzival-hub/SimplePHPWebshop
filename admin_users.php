@@ -92,6 +92,10 @@ tr:nth-child(even) {
       <input class="w3-input" name="delete" value="' . $item["username"] . '" style="display:none">
       <button class="w3-button w3-red">Delete</button>
       </form>
+      <form class ="w3-bar-item w3-center" method="POST" id="change_user" action="change_user.php">
+      <input class="w3-input" name="change" value="' . $item["username"] . '" style="display:none">
+      <button class="w3-button w3-green">Change</button>
+      </form>
 </td>
   </tr>';
     }
@@ -141,6 +145,12 @@ tr:nth-child(even) {
         unset($_POST["delete"]);
         header("Refresh:0");
     }
+/*
+    else if (isset($_POST["change"])){
+        header('Location: change_user.php', true, 301);
+        exit();
+    }
+    */
 } else {
     // Kein Admin Seite
     ?>
