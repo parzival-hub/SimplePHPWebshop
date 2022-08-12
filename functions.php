@@ -212,27 +212,21 @@ function deleteUser($username)
     $query->execute();
 }
 
-function changeUser($username, $changeParam, $changePlace ){
+function changeUser($username, $changeParam, $changePlace)
+{
     $conn = getConnection();
-    if($changePlace != "password"){
-       $sql = "UPDATE users SET " . $changePlace . " = '" . $changeParam . "' WHERE username = '" . $username . "'";
-        $query = $conn -> prepare($sql);
-        print_r($query);
+    if ($changePlace != "password") {
+        $sql = "UPDATE users SET " . $changePlace . " = '" . $changeParam . "' WHERE username = '" . $username . "'";
+        $query = $conn->prepare($sql);
         $query->execute();
-    if($changePlace == "username"){
+        if ($changePlace == "username") {
             $sql = "ALTER TABLE " . $username . " RENAME TO " . $changeParam;
-            $query = $conn -> prepare($sql);
-            print_r($query);
+            $query = $conn->prepare($sql);
             $query->execute();
-    } 
-    }
-    else if ($changePlace == "password"){
+        }
+    } else if ($changePlace == "password") {
         $sql = "UPDATE users SET " . $changePlace . " = '" . hash_hmac("sha512", $changeParam, "FJk!br!5") . "' WHERE username = '" . $username . "'";
-        $query = $conn -> prepare($sql);
-        print_r($query);
+        $query = $conn->prepare($sql);
         $query->execute();
     }
-    
-    
-    
 }

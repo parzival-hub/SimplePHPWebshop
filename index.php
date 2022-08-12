@@ -90,15 +90,15 @@ else
     $results = search($search_param);
     foreach ($results as $item) {
         echo '<div class="w3-container w3-center">
-      <h3>' . $item["name"] . '</h3>
-      <a href=product_details.php?p=' . $item['name'] . '> <img src="' . $item["image_path"] . '" alt="Avatar" style="width:80%"></a>
+      <h3>' . $item['name'] . '</h3>
+      <a href=product_details.php?p=' . urlencode($item['name']) . '> <img src="' . $item["image_path"] . '" alt="Avatar" style="width:80%"></a>
       <div class="w3-section">
         ' . $item["quantity"] . ' auf Lager
         <form class= "w3-bar-item w3-center" method="POST" id="addProductToCart" action="' . sanitize_input($_SERVER["PHP_SELF"]) . '">
         <input name="product" value="' . $item['name'] . '" style="display:none">
         <input style="width:10%;height:36px" type="number" min=1 name="quantity" value="1">
         <button class="w3-button w3-green">Kaufen</button></form >
-        <a href=product_details.php?p=' . $item['name'] . '><button class="w3-button w3-red" style="width:40%; margin-top:5px">Mehr Infos</button></a>
+        <a href=product_details.php?p=' . urlencode($item['name']) . '><button class="w3-button w3-red" style="width:40%; margin-top:5px">Mehr Infos</button></a>
 
     </div>
 </div>';

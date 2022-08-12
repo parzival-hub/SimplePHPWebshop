@@ -40,7 +40,7 @@ tr:nth-child(even) {
   <a class='w3-bar-item w3-button w3-hover-white' href='admin_users.php'>Benutzer</a>
   <a class='w3-bar-item w3-button w3-hover-white' href='admin_products.php'>Produkte</a>
 
-  
+
 </div>
 <div class="w3-row">
 
@@ -116,41 +116,32 @@ tr:nth-child(even) {
         $role = $_POST["Rolle"];
 
         if ($unsafe_email != $email)
-            $error = "Email enthÃ¤lt nicht erlaubte Zeichen.";
+            $error = "Email enthält nicht erlaubte Zeichen.";
         if ($unsafe_username != $username)
-            $error = "Username enthÃ¤lt nicht erlaubte Zeichen.";
+            $error = "Username enthält nicht erlaubte Zeichen.";
         if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $error = "Inkorrektes E-Mail Format";
-    }
-    $creationsql= "CREATE TABLE " . $username . " (name VARCHAR(255) NOT NULL, quantity INT(3), description VARCHAR(500) NOT NULL, image_path VARCHAR(100))";
-    if (empty($error)) {
-        if (checkUserDatabank($username)){
-            $conn = getConnection();
-            $conn->exec("INSERT INTO `users`(`username`, `password`, `email`,`role`) VALUES ('" . $username . "','" . hash_hmac("sha512", $password, "FJk!br!5") . "','" . $email . "','  $role  ')");
-            $conn->exec($creationsql);
-            $conn = null;
-            echo '<script type="text/javascript">
+        }
+        $creationsql = "CREATE TABLE " . $username . " (name VARCHAR(255) NOT NULL, quantity INT(3), description VARCHAR(500) NOT NULL, image_path VARCHAR(100))";
+        if (empty($error)) {
+            if (checkUserDatabank($username)) {
+                $conn = getConnection();
+                $conn->exec("INSERT INTO `users`(`username`, `password`, `email`,`role`) VALUES ('" . $username . "','" . hash_hmac("sha512", $password, "FJk!br!5") . "','" . $email . "','  $role  ')");
+                $conn->exec($creationsql);
+                $conn = null;
+                echo '<script type="text/javascript">
             window.onload = function () { alert("Benutzer erstellt!"); }
             </script>';
-            header("Refresh:0");
+                header("Refresh:0");
+            }
         }
-
-        
-        
-    }
-    } // LÃ¶schen von Benutzer
+    } // Löschen von Benutzer
     else if (isset($_POST["delete"])) {
         $deleteParam = sanitize_input($_POST["delete"]);
         deleteUser($deleteParam);
         unset($_POST["delete"]);
         header("Refresh:0");
     }
-/*
-    else if (isset($_POST["change"])){
-        header('Location: change_user.php', true, 301);
-        exit();
-    }
-    */
 } else {
     // Kein Admin Seite
     ?>
