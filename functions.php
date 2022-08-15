@@ -231,3 +231,31 @@ function changeUser($username, $changeParam, $changePlace)
         $query->execute();
     }
 }
+
+function buyCart($username){
+    $conn = getConnection();
+    $sql = "SELECT * FROM " . $username;
+    $query = $conn->prepare($sql);
+    $query->execute();
+
+    $results = [];
+    while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+        array_push($results, $row);
+    }
+
+    foreach($results as $item){
+        $sql = "SELECT quantity FROM products WHERE name = '" . $item["name"] .  "' limit 1";
+        $query = $conn->prepare($sql);
+        $query->execute();
+        $productrow= $query->fetch(PDO::FETCH_ASSOC);
+        $sql = "UPDATE products SET quantity = '" . $productrow["quantity"] - $item["quantity"] . "' WHERE name = '" . $item['name'] . "'";
+        $query = $conn->prepare($sql);
+        $query->execute();
+    }
+
+    $sql = "TRUNCATE TABLE " . $username;
+    $query = $conn->prepare($sql);
+    $query->execute();
+
+}
+

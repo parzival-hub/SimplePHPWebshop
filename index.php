@@ -91,7 +91,7 @@ else
     foreach ($results as $item) {
         echo '<div class="w3-container w3-center">
       <h3>' . $item['name'] . '</h3>
-      <a href=product_details.php?p=' . urlencode($item['name']) . '> <img src="' . $item["image_path"] . '" alt="Avatar" style="width:80%"></a>
+      <a href=product_details.php?p=' . urlencode($item['name']) . '> <img src=' . $item["image_path"] . ' alt="Produktbild" style="width:50%"></a>
       <div class="w3-section">
         ' . $item["quantity"] . ' auf Lager
         <form class= "w3-bar-item w3-center" method="POST" id="addProductToCart" action="' . sanitize_input($_SERVER["PHP_SELF"]) . '">
