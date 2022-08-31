@@ -242,13 +242,14 @@ function buyCart($username){
     while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
         array_push($results, $row);
     }
-
+    //Kleine Änderung, da hier wenn Shop auf Debian läuft, die Rechnung nicht funktioniert. Rechnung deswegen außerhalb des SQL Statements
     foreach($results as $item){
         $sql = "SELECT quantity FROM products WHERE name = '" . $item["name"] .  "' limit 1";
         $query = $conn->prepare($sql);
         $query->execute();
         $productrow= $query->fetch(PDO::FETCH_ASSOC);
-        $sql = "UPDATE products SET quantity = '" . $productrow["quantity"] - $item["quantity"] . "' WHERE name = '" . $item['name'] . "'";
+        $newquantity = $productrow["quantity"] - $item["quantity"];
+        $sql = "UPDATE products SET quantity = '" . $newquantity . "' WHERE name = '" . $item['name'] . "'";
         $query = $conn->prepare($sql);
         $query->execute();
     }
