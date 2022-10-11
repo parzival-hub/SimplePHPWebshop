@@ -1,17 +1,33 @@
 <?php
-error_reporting(E_ERROR | E_PARSE);
 
+// error_reporting(0);
 function sanitize_input($data)
 {
     $data = trim($data);
     $data = stripslashes($data);
     $data = htmlspecialchars($data);
     $data = str_replace("%", "", $data);
+    $data = str_replace(";", "", $data);
+    $data = str_replace("'", "", $data);
+    $data = str_replace("(", "", $data);
+    $data = str_replace(")", "", $data);
     return $data;
+}
+
+function getUser()
+{
+    $conn = getConnection();
+    $sql = "SELECT * FROM `users` WHERE `username` = :searchq";
+    $query = $conn->prepare($sql);
+    $query->bindValue("searchq", $_SESSION["username"]);
+    $query->execute();
+    $row = $query->fetch(PDO::FETCH_ASSOC);
+    return $row;
 }
 
 function login($name, $role)
 {
+    session_regenerate_id(true);
     $_SESSION["username"] = $name;
     $_SESSION["role"] = $role;
     echo "<script>window.location.assign('index.php');</script>";
@@ -90,6 +106,39 @@ function search($searchParam)
         array_push($results, $row);
     }
     return $results;
+}
+
+function loginAllowed($username, $clear_password)
+{
+    $conn = getConnection();
+    $sql = "SELECT * FROM `users` WHERE `username`=? AND `password`=?";
+    $query = $conn->prepare($sql);
+    $query->bindValue(1, $username);
+    $query->bindValue(2, hash_hmac("sha512", $clear_password, "FJk!br!5"));
+    $query->execute();
+
+    if ($query->rowCount() == 1) {
+        return $query->fetch(PDO::FETCH_ASSOC)["role"];
+    } else
+        return "None";
+}
+
+function addUser($username, $email, $password, $role)
+{
+    $conn = getConnection();
+
+    $creationsql = "CREATE TABLE :username (name VARCHAR(255) NOT NULL, quantity INT(3), description VARCHAR(500) NOT NULL, image_path VARCHAR(100))";
+    $creation_query = $conn->prepare($creationsql);
+    $creation_query->bindValue("username", $username);
+    $creation_query->execute();
+
+    $insert_sql = "INSERT INTO `users`(`username`, `password`, `email`,`role`) VALUES (':username',':password',':email',':role')";
+    $insert_query = $conn->prepare($insert_sql);
+    $insert_query->bindValue("username", $username);
+    $insert_query->bindValue("password", $password);
+    $insert_query->bindValue("email", $email);
+    $insert_query->bindValue("role", $role);
+    $insert_query->execute();
 }
 
 function searchUser($searchParam)
@@ -213,21 +262,30 @@ function deleteUser($username)
     $query->execute();
 }
 
+function changePassword($oldpass, $newpass)
+{
+    $conn = getConnection();
+    $sql = "UPDATE users SET password = '" . hash_hmac("sha512", $newpass, "FJk!br!5") . "' WHERE username = ':userName' AND password=':pass'";
+    $query = $conn->prepare($sql);
+    $query->bindValue("userName", $_SESSION["username"]);
+    $query->bindValue("pass", hash_hmac("sha512", $oldpass, "FJk!br!5"));
+    $query->execute();
+}
+
 function changeUser($username, $changeParam, $changePlace)
 {
     $conn = getConnection();
-    if ($changePlace != "password") {
-        $sql = "UPDATE users SET " . $changePlace . " = '" . $changeParam . "' WHERE username = '" . $username . "'";
+    if ($changePlace == "username") {
+        $sql = "ALTER TABLE ':changePlace' RENAME TO ':changeParam'";
         $query = $conn->prepare($sql);
+        $query->bindValue("changePlace", $username);
+        $query->bindValue("changeParam", $changeParam);
         $query->execute();
-        if ($changePlace == "username") {
-            $sql = "ALTER TABLE " . $username . " RENAME TO " . $changeParam;
-            $query = $conn->prepare($sql);
-            $query->execute();
-        }
-    } else if ($changePlace == "password") {
-        $sql = "UPDATE users SET " . $changePlace . " = '" . hash_hmac("sha512", $changeParam, "FJk!br!5") . "' WHERE username = '" . $username . "'";
+    } else if ($changePlace == "email") {
+        $sql = "UPDATE users SET :changePlace = '" . $changeParam . "' WHERE username = ':changeParam'";
         $query = $conn->prepare($sql);
+        $query->bindValue("changePlace", $changePlace);
+        $query->bindValue("changeParam", $changeParam);
         $query->execute();
     }
 }

@@ -1,7 +1,7 @@
 <?php
 include 'functions.php';
 session_start();
-error_reporting(E_ERROR | E_PARSE);
+error_reporting(0);
 if (isset($_SESSION['username']) && isset($_SESSION['role']))
     $loggedIn = true;
 else

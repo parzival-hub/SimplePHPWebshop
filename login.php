@@ -1,11 +1,11 @@
 <?php
 include 'functions.php';
 session_start();
-error_reporting(E_ERROR | E_PARSE);
+error_reporting(0);
 //
 $error = "";
 
-// Redirect zum login
+// Redirect zu index
 if (isset($_SESSION["username"])) {
     echo "<script>window.location.assign('index.php');</script>";
     exit();
@@ -17,7 +17,7 @@ if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
     $pass = $_POST["password"];
 
     if (empty($unsafe_name) || empty($pass))
-        $error = "Alle Felder mï¿½ssen ausgefï¿½llt werden.";
+        $error = "Alle Felder müssen ausgefüllt werden.";
 
     $name = sanitize_input($unsafe_name);
 
@@ -33,22 +33,6 @@ if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
     }
 }
 
-function loginAllowed($username, $clear_password)
-{
-    $password = hash_hmac("sha512", $clear_password, "FJk!br!5");
-    $conn = getConnection();
-
-    $sql = "SELECT * FROM `users` WHERE `username`=? AND `password`=?";
-    $query = $conn->prepare($sql);
-    $query->bindValue(1, $username);
-    $query->bindValue(2, $password);
-    $query->execute();
-
-    if ($query->rowCount() == 1) {
-        return $query->fetch(PDO::FETCH_ASSOC)["role"];
-    } else
-        return "None";
-}
 ?>
 
 <!DOCTYPE html>

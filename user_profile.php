@@ -1,7 +1,7 @@
 <?php
 include 'functions.php';
 session_start();
-error_reporting(E_ERROR | E_PARSE);
+error_reporting(0);
 if (isset($_SESSION["username"])) {
     ?>
 
@@ -49,12 +49,7 @@ tr:nth-child(even) {
 
     echo $_SESSION["username"]?></td>
 	<td id="td_email"><?php
-    $conn = getConnection();
-    $sql = "SELECT * FROM `users` WHERE `username` = :searchq";
-    $query = $conn->prepare($sql);
-    $query->bindValue("searchq", $_SESSION["username"]);
-    $query->execute();
-    $row = $query->fetch(PDO::FETCH_ASSOC);
+    $row = getUser();
     echo $row["email"];
     ?></td>
 	<td id="td_role"><?php
@@ -80,7 +75,8 @@ tr:nth-child(even) {
   <div class="w3-center">
     <label for="password">Passwort:</label>
     <form  method="POST" id="password_form" >
-    	<input type="text" name="password" id="password" placeholder= "Neues Passwort" >
+   	    <input type="password" name="old_password" id="old_password" placeholder= "Altes Passwort" >
+    	<input type="password" name="password" id="password" placeholder= "Neues Passwort" >
     	<button class="w3-btn w3-bar-item w3-hide-medium w3-hover-white w3-padding-16" type="submit" form="password_form" >Ändern</button>
 	</form>
 </div>
@@ -90,19 +86,27 @@ tr:nth-child(even) {
     if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
         if (isset($_POST["email"])) {
             $email = sanitize_input($_POST["email"]);
+            if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                echo "Invalid character in Email";
+                return;
+            }
             changeUser($_SESSION["username"], $email, "email");
             echo "<script>
                     document.getElementById('td_email').innerHTML = '$email';
             </script>";
         } else if (isset($_POST["username"])) {
             $username = sanitize_input($_POST["username"]);
+            if (! preg_match("/^[a-zA-Z-0-9' ]*$/", $username)) {
+                echo "Invalid character in Username";
+                return;
+            }
             changeUser($_SESSION["username"], $username, "username");
             $_SESSION["username"] = $username;
             echo "<script>
                     document.getElementById('td_username').innerHTML = '$username';
             </script>";
         } else if (isset($_POST["password"])) {
-            changeUser($_SESSION["username"], $_POST["password"], "password");
+            changePassword($_POST["old_password"], $_POST["password"]);
         }
     }
     ?>

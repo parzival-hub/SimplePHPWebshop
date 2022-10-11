@@ -1,6 +1,6 @@
 <?php
 include 'functions.php';
-error_reporting(E_ERROR | E_PARSE);
+error_reporting(0);
 session_start();
 if (isset($_SESSION["role"]) && $_SESSION["role"] == 'admin') {
     ?>

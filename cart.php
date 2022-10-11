@@ -1,7 +1,7 @@
 <?php
 include 'functions.php';
 session_start();
-error_reporting(E_ERROR | E_PARSE);
+error_reporting(0);
 if (! isset($_SESSION["username"])) {
     header('Location: login.php', true, 301);
     exit();
