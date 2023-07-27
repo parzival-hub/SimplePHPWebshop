@@ -1,48 +1,45 @@
 <?php
 include 'functions.php';
 error_reporting(E_ERROR | E_PARSE);
+
 session_start();
 if (isset($_SESSION["role"]) && $_SESSION["role"] == 'admin') {
     ?>
 
 <html>
 
-<head>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="style2.css">
-</head>
+<?php include "header.php";?>
 
-<body>
+<div class="w3-center">
+    <a class='w3-bar-item w3-button w3-hover-white' href='admin_users.php'>Benutzer</a>
+    <a class='w3-bar-item w3-button w3-hover-white' href='admin_products.php'>Produkte</a>
+</div>
 
-    <header class="top-header">
-        <a href="index.php">
-            <img src="images/nuts_logo.png" alt="ThisIsNutsLogo" width="70" height="60">
-        </a>
-    </header>
-    <div class="w3-center">
-        <a class='w3-bar-item w3-button w3-hover-white' href='admin_users.php'>Benutzer</a>
-        <a class='w3-bar-item w3-button w3-hover-white' href='admin_products.php'>Produkte</a>
-
-
-    </div>
-    <div class="w3-row">
-
-
+<div style="margin:10px">
+    <div class="w3-row" style="display:flex">
         <form class="w3-center" method="POST" id="add_product"
-            action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+            action="<?php echo sanitize_input($_SERVER["PHP_SELF"]); ?>">
             <input name="add" value="true" style="display: none">
             <input type="text" name="Name" placeholder="Name">
             <input type="text" name="Description" placeholder="Description">
             <input type="text" name="Quantity" placeholder="Quantity">
             <input type="text" id="add_image_path" name="Image_Path" placeholder="Image_Path">
             <button class="w3-btn w3-hide-medium w3-padding-16" type="submit" form="add_product">Add</button>
-
         </form>
+
+        <div class="w3-center" style="margin-top: 50px;margin-left:50px">
+            <form action="<?php echo sanitize_input($_SERVER["PHP_SELF"]); ?>" method="POST"
+                enctype="multipart/form-data">
+                Select image to upload:
+                <input type="file" name="fileToUpload" id="fileToUpload">
+                <input type="submit" value="Upload Image" name="fileUpload">
+            </form>
+        </div>
     </div>
 
 
     <form class="w3-bar-item w3-right" method="GET" id="search"
-        action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        action="<?php echo sanitize_input($_SERVER["PHP_SELF"]); ?>">
         <div class="w3-center">
             <input class="w3-input" type="search" id="suche" name="s" placeholder="Filter Produkte...">
             <button class="w3-btn w3-bar-item w3-right w3-hide-medium w3-hover-white w3-padding-16" type="submit"
@@ -68,13 +65,13 @@ if (isset($_GET["s"]) && !empty($_GET["s"])) {
     $results = search($search_param);
     foreach ($results as $item) {
         echo '  <tr>
-    <td>' . htmlspecialchars($item["name"]) . '</td>
-    <td>' . htmlspecialchars($item["description"]) . '</td>
-    <td>' . htmlspecialchars($item["quantity"]) . '</td>
-    <td>' . htmlspecialchars($item["image_path"]) . '</td>
+    <td>' . sanitize_input($item["name"]) . '</td>
+    <td>' . sanitize_input($item["description"]) . '</td>
+    <td>' . sanitize_input($item["quantity"]) . '</td>
+    <td>' . sanitize_input($item["image_path"]) . '</td>
 <td>
- <form class ="w3-bar-item w3-right" method="POST" id="delete_product" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">
-      <input class="w3-input" name="delete" value="' . htmlspecialchars($item["name"]) . '" style="display:none">
+ <form class ="w3-bar-item w3-right" method="POST" id="delete_product" action="' . sanitize_input($_SERVER["PHP_SELF"]) . '">
+      <input class="w3-input" name="delete" value="' . sanitize_input($item["name"]) . '" style="display:none">
       <button class="w3-button w3-red">Delete</button>
       </form>
 </td>
@@ -82,17 +79,12 @@ if (isset($_GET["s"]) && !empty($_GET["s"])) {
     }
     ?>
     </table>
+</div>
 </body>
 
 </html>
 
-<div class="w3-center" style="margin-top: 50px">
-    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" enctype="multipart/form-data">
-        Select image to upload:
-        <input type="file" name="fileToUpload" id="fileToUpload">
-        <input type="submit" value="Upload Image" name="fileUpload">
-    </form>
-</div>
+
 
 <?php
 

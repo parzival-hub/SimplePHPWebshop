@@ -1,1 +1,7 @@
-1. Add To Cart muss jetzt in einen neue gemeinsame Tabelle die Items einfügen anstatt in die Tabelle des Users.
+Bugs:
+
+
+
+Features:
+
+1. Im Warenkorb die Anzahl Änderung

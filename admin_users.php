@@ -7,56 +7,45 @@ if (isset($_SESSION["role"]) && $_SESSION["role"] == 'admin') {
 
 <html>
 
-<head>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="style2.css">
-</head>
+<?php include "header.php";?>
 
 <body>
-
-    <header class="top-header">
-        <a href="index.php">
-            <img src="images/nuts_logo.png" alt="ThisIsNutsLogo" width="70" height="60">
-        </a>
-    </header>
     <div class="w3-center">
         <a class='w3-bar-item w3-button w3-hover-white' href='admin_users.php'>Benutzer</a>
         <a class='w3-bar-item w3-button w3-hover-white' href='admin_products.php'>Produkte</a>
-
-
-    </div>
-    <div class="w3-row">
-
-
-        <form class="w3-center" method="POST" id="add_user"
-            action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-            <input name="add" value="true" style="display: none">
-            <input type="text" name="Username" placeholder="Username">
-            <input type="text" name="E-Mail" placeholder="E-Mail">
-            <input type="text" name="Passwort" placeholder="Passwort">
-            <input type="text" name="Rolle" placeholder="Rolle">
-            <button class="w3-btn w3-hide-medium w3-padding-16" type="submit" form="add_user">Add</button>
-        </form>
     </div>
 
-
-    <form class="w3-bar-item w3-right" method="GET" id="search"
-        action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-        <div class="w3-center">
-            <input class="w3-input" type="search" id="suche" name="s" placeholder="Filter Benutzer...">
-            <button class="w3-btn w3-bar-item w3-right w3-hide-medium w3-hover-white w3-padding-16" type="submit"
-                form="search">Suchen</button>
+    <div style="margin:10px">
+        <div class="w3-row">
+            <form class="w3-center" method="POST" id="add_user"
+                action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                <input name="add" value="true" style="display: none">
+                <input type="text" name="Username" placeholder="Username">
+                <input type="text" name="E-Mail" placeholder="E-Mail">
+                <input type="text" name="Passwort" placeholder="Passwort">
+                <input type="text" name="Rolle" placeholder="Rolle">
+                <button class="w3-btn w3-hide-medium w3-padding-16" type="submit" form="add_user">Add</button>
+            </form>
         </div>
-    </form>
 
-    <table>
-        <tr>
-            <th>Name</th>
-            <th>E-Mail</th>
-            <th>Rolle</th>
-            <th>Aktion</th>
-        </tr>
-        <?php
+
+        <form class="w3-bar-item w3-right" method="GET" id="search"
+            action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+            <div class="w3-center">
+                <input class="w3-input" type="search" id="suche" name="s" placeholder="Filter Benutzer...">
+                <button class="w3-btn w3-bar-item w3-right w3-hide-medium w3-hover-white w3-padding-16" type="submit"
+                    form="search">Suchen</button>
+            </div>
+        </form>
+
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>E-Mail</th>
+                <th>Rolle</th>
+                <th>Aktion</th>
+            </tr>
+            <?php
 if (isset($_GET["s"]) && !empty($_GET["s"])) {
         $search_param = sanitize_input($_GET["s"]);
     } else {
@@ -82,7 +71,8 @@ if (isset($_GET["s"]) && !empty($_GET["s"])) {
   </tr>';
     }
     ?>
-    </table>
+        </table>
+    </div>
 </body>
 
 </html>
@@ -113,8 +103,8 @@ if (isset($_GET["s"]) && !empty($_GET["s"])) {
         }
 
         if (empty($error)) {
-            create_user();
-            header("Refresh:0");
+            create_user($username, $password, $email, $role);
+            echo '<script type="text/javascript">window.location.reload();</script>';
         } else {
             print($error);
         }
@@ -122,7 +112,7 @@ if (isset($_GET["s"]) && !empty($_GET["s"])) {
     else if (isset($_POST["delete"])) {
         deleteUser(sanitize_input($_POST["delete"]));
         unset($_POST);
-        header("Refresh:0");
+        echo '<script type="text/javascript">window.location.reload();</script>';
     }
 } else {
     // Kein Admin Seite

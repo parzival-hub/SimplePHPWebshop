@@ -19,7 +19,6 @@ SET time_zone = "+00:00";
 
 --
 -- Datenbank: `xiks5egieksn6c6a`
--------------------------------------------------------
 
 --
 -- Tabellenstruktur für Tabelle `admin`
