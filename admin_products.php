@@ -8,127 +8,95 @@ if (isset($_SESSION["role"]) && $_SESSION["role"] == 'admin') {
 <html>
 
 <head>
-<style>
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-td, th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
-}
-
-tr:nth-child(even) {
-  background-color: #dddddd;
-}
-</style>
-<link rel="stylesheet" href="style2.css">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style2.css">
 </head>
 
 <body>
 
-<header class="top-header">
-   <a href="index.php">
+    <header class="top-header">
+        <a href="index.php">
             <img src="images/nuts_logo.png" alt="ThisIsNutsLogo" width="70" height="60">
         </a>
-</header>
-<div class="w3-center">
-  <a class='w3-bar-item w3-button w3-hover-white' href='admin_users.php'>Benutzer</a>
-  <a class='w3-bar-item w3-button w3-hover-white' href='admin_products.php'>Produkte</a>
+    </header>
+    <div class="w3-center">
+        <a class='w3-bar-item w3-button w3-hover-white' href='admin_users.php'>Benutzer</a>
+        <a class='w3-bar-item w3-button w3-hover-white' href='admin_products.php'>Produkte</a>
 
 
-</div>
-<div class="w3-row">
+    </div>
+    <div class="w3-row">
 
 
- <form class="w3-center" method="POST" id="add_product" action="<?php
-    echo htmlspecialchars($_SERVER["PHP_SELF"]);
-    ?>">
-    <input name="add" value="true" style="display: none">
-	<input  type="text"  name="Name" placeholder="Name">
-	<input type="text" name="Description" placeholder="Description">
-	<input  type="text"  name="Quantity" placeholder="Quantity">
-	<input type="text" id="add_image_path"  name="Image_Path" placeholder="Image_Path">
-	<button class="w3-btn w3-hide-medium w3-padding-16" type="submit" form="add_product">Add</button>
+        <form class="w3-center" method="POST" id="add_product"
+            action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+            <input name="add" value="true" style="display: none">
+            <input type="text" name="Name" placeholder="Name">
+            <input type="text" name="Description" placeholder="Description">
+            <input type="text" name="Quantity" placeholder="Quantity">
+            <input type="text" id="add_image_path" name="Image_Path" placeholder="Image_Path">
+            <button class="w3-btn w3-hide-medium w3-padding-16" type="submit" form="add_product">Add</button>
 
-</form>
-</div>
+        </form>
+    </div>
 
 
- <form class ="w3-bar-item w3-right" method="GET" id="search" action="<?php
-    echo htmlspecialchars($_SERVER["PHP_SELF"]);
-    ?>">
- <div class="w3-center">
-	<input class="w3-input" type="search" id="suche" name="s" placeholder="Filter Produkte...">
-	<button class="w3-btn w3-bar-item w3-right w3-hide-medium w3-hover-white w3-padding-16" type="submit" form="search">Suchen</button>
-</div>
-</form>
+    <form class="w3-bar-item w3-right" method="GET" id="search"
+        action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <div class="w3-center">
+            <input class="w3-input" type="search" id="suche" name="s" placeholder="Filter Produkte...">
+            <button class="w3-btn w3-bar-item w3-right w3-hide-medium w3-hover-white w3-padding-16" type="submit"
+                form="search">Suchen</button>
+        </div>
+    </form>
 
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Description</th>
-    <th>Quantity</th>
-    <th>Image_Path</th>
-    <th>Aktion</th>
-  </tr>
-<?php
-    if (isset($_GET["s"]) && ! empty($_GET["s"]))
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Quantity</th>
+            <th>Image_Path</th>
+            <th>Aktion</th>
+        </tr>
+        <?php
+if (isset($_GET["s"]) && !empty($_GET["s"])) {
         $search_param = sanitize_input($_GET["s"]);
-    else
+    } else {
         $search_param = "";
+    }
 
     $results = search($search_param);
     foreach ($results as $item) {
         echo '  <tr>
-    <td>' . $item["name"] . '</td>
-    <td>' . $item["description"] . '</td>
-    <td>' . $item["quantity"] . '</td>
-    <td>' . $item["image_path"] . '</td>
+    <td>' . htmlspecialchars($item["name"]) . '</td>
+    <td>' . htmlspecialchars($item["description"]) . '</td>
+    <td>' . htmlspecialchars($item["quantity"]) . '</td>
+    <td>' . htmlspecialchars($item["image_path"]) . '</td>
 <td>
  <form class ="w3-bar-item w3-right" method="POST" id="delete_product" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">
-      <input class="w3-input" name="delete" value="' . $item["name"] . '" style="display:none">
+      <input class="w3-input" name="delete" value="' . htmlspecialchars($item["name"]) . '" style="display:none">
       <button class="w3-button w3-red">Delete</button>
       </form>
 </td>
   </tr>';
     }
-
-    /*
-     * <a href=admin.php?s=' . urlencode($search_param) . '&delete=' . urlencode($item["name"]) . '>
-     * <button class="w3-button w3-red">Delete</button>
-     * </a>
-     */
-    /*
-     * <td>
-     * <form class ="w3-bar-item w3-right" method="POST" id="delete_product" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">
-     * <input class="w3-input" name="product" value="' . $item["name"] . '" style="display:none">
-     * <button class="w3-button w3-red">Delete</button>
-     * </form>
-     * </td>
-     */
     ?>
-</table>
+    </table>
 </body>
+
 </html>
 
 <div class="w3-center" style="margin-top: 50px">
-<form action="<?php
-    echo htmlspecialchars($_SERVER["PHP_SELF"]);
-    ?>" method="POST" enctype="multipart/form-data">
-  Select image to upload:
-  <input type="file" name="fileToUpload" id="fileToUpload">
-  <input type="submit" value="Upload Image" name="fileUpload">
-</form>
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" enctype="multipart/form-data">
+        Select image to upload:
+        <input type="file" name="fileToUpload" id="fileToUpload">
+        <input type="submit" value="Upload Image" name="fileUpload">
+    </form>
 </div>
 
 <?php
 
-    // Hinzuf�gen von Produkten
+    // Hinzufügen von Produkten
     if (isset($_POST["add"])) {
         $addParam = sanitize_input($_POST["add"]);
         if ($addParam == "true") {
@@ -137,22 +105,21 @@ tr:nth-child(even) {
             $quantity = sanitize_input($_POST["Quantity"]);
             $image_path = sanitize_input($_POST["Image_Path"]);
             addProduct($name, $desc, $quantity, $image_path);
-            unset($_POST["add"]);
-            unset($_POST["Name"]);
-            unset($_POST["Description"]);
-            unset($_POST["Quantity"]);
-            unset($_POST["Image_Path"]);
-            echo "<script>window.location.assign('admin_products.php');</script>";
+            unset($_POST);
+            header('Location: admin_products.php');
+            exit();
         }
-    } // L�schen von Produkten
+    } // Löschen von Produkten
     else if (isset($_POST["delete"])) {
         $deleteParam = sanitize_input($_POST["delete"]);
         deleteProduct($deleteParam);
-        unset($_POST["delete"]);
-        echo "<script>window.location.assign('admin_products.php');</script>";
+        unset($_POST);
+        header('Location: admin_products.php');
+        exit();
     } else if (isset($_POST["fileUpload"])) {
-        ?><p class="w3-center" style="color:red"><?php
-        if (! file_exists("uploads")) {
+        ?><p class="w3-center" style="color:red">
+    <?php
+if (!file_exists("uploads")) {
             mkdir("uploads", 0700, true);
         }
 
@@ -163,23 +130,22 @@ tr:nth-child(even) {
         $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
         // Check if image file is a actual image or fake image
-        $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
-        if ($check !== false) {
-            $uploadOk = true;
-        } else {
+        if (!getimagesize($_FILES["fileToUpload"]["tmp_name"])) {
             echo "File is not an image.";
             $uploadOk = false;
         }
 
         // Check if file already exists
-        if (file_exists($target_file)) {
-            echo "Sorry, file already exists.";
-            $uploadOk = false;
+        $tmp_file_name = str_replace("."+$imageFileType, "", $target_file);
+        $number = 1;
+        while (file_exists($target_file)) {
+            $tmp_file_name = $target_file+"-"+$number;
+            $number++;
         }
 
         // Check file size
-        if ($_FILES["fileToUpload"]["size"] > 500000) {
-            echo "Sorry, your file is too large.";
+        if ($_FILES["fileToUpload"]["size"] > 1000000) {
+            echo "Sorry, your file is too large. Only files under 1 MB are allowed.";
             $uploadOk = false;
         }
 
@@ -198,19 +164,21 @@ tr:nth-child(even) {
             }
         }
         ?></p><?php
-    }
+}
 } else {
     // Kein Admin Seite
     ?>
-    <html>
-    <body>
-    <main>
-    <h1>Access Denied: Not Admin
-    </h1>
-    </main>
-    </body>
-    </html>
+<html>
 
-    <?php
+<body>
+    <main>
+        <h1>Access Denied: Not Admin
+        </h1>
+    </main>
+</body>
+
+</html>
+
+<?php
 }
 ?>

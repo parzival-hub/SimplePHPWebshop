@@ -19,9 +19,7 @@ SET time_zone = "+00:00";
 
 --
 -- Datenbank: `xiks5egieksn6c6a`
---
-
--- --------------------------------------------------------
+-------------------------------------------------------
 
 --
 -- Tabellenstruktur für Tabelle `admin`
@@ -48,33 +46,6 @@ CREATE TABLE `billboard` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `jimjizz`
---
-
-CREATE TABLE `jimjizz` (
-  `name` varchar(255) NOT NULL,
-  `quantity` int(3) DEFAULT NULL,
-  `description` varchar(500) NOT NULL,
-  `image_path` varchar(100) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `mistygurl`
---
-
-CREATE TABLE `mistygurl` (
-  `name` varchar(255) NOT NULL,
-  `quantity` int(3) DEFAULT NULL,
-  `description` varchar(500) NOT NULL,
-  `image_path` varchar(100) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
 --
 -- Tabellenstruktur für Tabelle `products`
 --
@@ -119,9 +90,6 @@ INSERT INTO `users` (`username`, `password`, `email`, `role`) VALUES
 ('MistyGurl', '64a240daed99995ed28309fa4ee7e4a3464139fb5f320596e8b29948999dd83de01c59dbf415ea33d5de7a5633b5d4ccbc51170ca1b1b665c793046211f81513', 'misty.gurl@thisisnuts.de', '  user  '),
 ('BillBoard', '9151838deab3292c202e92e00592e6bd7aaa61c4830ca70b01335d1bc584133f5474a0caf12ec1412d23c2b01cc3c7c54f9e62765de479353643959497a70e29', 'bill.board@thisisnuts.de', '  user  ');
 
---
--- Indizes der exportierten Tabellen
---
 
 --
 -- Indizes für die Tabelle `products`

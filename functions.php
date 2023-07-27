@@ -7,6 +7,10 @@ function sanitize_input($data)
     $data = stripslashes($data);
     $data = htmlspecialchars($data);
     $data = str_replace("%", "", $data);
+    $data = str_replace("{", "", $data);
+    $data = str_replace("}", "", $data);
+    $data = str_replace(";", "", $data);
+    $data = str_replace("%", "", $data);
     return $data;
 }
 
@@ -22,7 +26,7 @@ function getConnection()
 {
     return new PDO('mysql:host=127.0.0.1;dbname=xiks5egieksn6c6a;charset=utf8mb4', 'rm3AER5PkBnnEiTg', 'aS7HFRb94!@t3LTR', array(
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_PERSISTENT => false
+        PDO::ATTR_PERSISTENT => false,
     ));
 }
 
@@ -134,8 +138,10 @@ function addToCart($productName, $quantity, $username)
         // Falls Produkt nicht vorhanden, füge hinzu
         if (empty($checking)) {
             $max_quant = $results[0]["quantity"];
-            if ($quantity > $max_quant)
+            if ($quantity > $max_quant) {
                 $quantity = $max_quant;
+            }
+
             $sql = "INSERT INTO " . $username . " (`name`, `description`, `quantity`, `image_path`) VALUES (:name,:desc,:quant,:image)";
             $query2 = $conn->prepare($sql);
             $query2->bindValue("name", $productName);
@@ -146,8 +152,10 @@ function addToCart($productName, $quantity, $username)
         } // Falls Produkt schon vorhanden, erhöhe um quant
         else {
             $max_quant = $results[0]["quantity"] - $checking[0]["quantity"];
-            if ($quantity > $max_quant)
+            if ($quantity > $max_quant) {
                 $quantity = $max_quant;
+            }
+
             $sql = "UPDATE " . $username . " SET  quantity = quantity + :quant WHERE name = :searchq";
             $query2 = $conn->prepare($sql);
             $query2->bindValue("searchq", $productName);
@@ -201,6 +209,20 @@ function checkUserDatabank($userName)
     }
 }
 
+function create_user()
+{
+    if (checkUserDatabank($username)) {
+        $conn = getConnection();
+        $query = $conn->prepare("INSERT INTO `users`(`username`, `password`, `email`,`role`) VALUES (':username',':password',':email',':userRole')");
+        $query->bindValue("username", $username);
+        $query->bindValue("password", hash_hmac("sha512", $password, "FJk!br!5"));
+        $query->bindValue("email", $email);
+        $query->bindValue("userRole", $role);
+        $query->execute();
+        echo '<script type="text/javascript"> alert("Benutzer erstellt!");</script>';
+    }
+}
+
 function deleteUser($username)
 {
     $conn = getConnection();
@@ -232,7 +254,8 @@ function changeUser($username, $changeParam, $changePlace)
     }
 }
 
-function buyCart($username){
+function buyCart($username)
+{
     $conn = getConnection();
     $sql = "SELECT * FROM " . $username;
     $query = $conn->prepare($sql);
@@ -243,11 +266,11 @@ function buyCart($username){
         array_push($results, $row);
     }
     //Kleine Änderung, da hier wenn Shop auf Debian läuft, die Rechnung nicht funktioniert. Rechnung deswegen außerhalb des SQL Statements
-    foreach($results as $item){
-        $sql = "SELECT quantity FROM products WHERE name = '" . $item["name"] .  "' limit 1";
+    foreach ($results as $item) {
+        $sql = "SELECT quantity FROM products WHERE name = '" . $item["name"] . "' limit 1";
         $query = $conn->prepare($sql);
         $query->execute();
-        $productrow= $query->fetch(PDO::FETCH_ASSOC);
+        $productrow = $query->fetch(PDO::FETCH_ASSOC);
         $newquantity = $productrow["quantity"] - $item["quantity"];
         $sql = "UPDATE products SET quantity = '" . $newquantity . "' WHERE name = '" . $item['name'] . "'";
         $query = $conn->prepare($sql);
@@ -259,4 +282,3 @@ function buyCart($username){
     $query->execute();
 
 }
-

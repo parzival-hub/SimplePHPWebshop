@@ -1,18 +1,46 @@
+.top-header {
+	width: 100%;
+	background-image: url(images/background_haselnuts.jpg);
+	background-size: cover;
+	background-position: center;
+	margin: 0px;
+}
 
+.top-header>h1 {
+	color: white;
+	background-color: rgba(0, 0, 0, 0.3);
+	padding: 1em 1em;
+	font-family: sans-serif;
+	text-align: center;
+	margin: 0px;
+}
 
-.top-header { 
-	width: 100%; 
-	background-image: url(images/background_haselnuts.jpg); 
-	background-size: cover; 
-	background-position: center; 
-    margin:0px;
-} 
- 
-.top-header > h1 { 
-	color: white; 
-	background-color: rgba(0,0,0,0.3); 
-	padding: 1em 1em; 
-	font-family: sans-serif; 
-    text-align: center;
-    margin:0px;
+table {
+	font-family: arial, sans-serif;
+	border-collapse: collapse;
+	width: 100%;
+}
+
+td,
+th {
+	border: 1px solid #dddddd;
+	text-align: left;
+	padding: 8px;
+}
+
+tr:nth-child(even) {
+	background-color: #dddddd;
+}
+
+.grid-container {
+	display: grid;
+	grid-template-columns: auto auto auto;
+	padding: 10px;
+}
+
+.grid-item {
+	border: 1px solid rgba(0, 0, 0, 0.8);
+	padding: 20px;
+	font-size: 30px;
+	text-align: center;
 }
