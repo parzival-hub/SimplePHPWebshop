@@ -49,8 +49,8 @@ echo htmlspecialchars($_SERVER["PHP_SELF"]);
 <table>
   <tr>
     <th>Name</th>
-    <th>Description</th>
-    <th>Quantity</th>
+    <th>Beschreibung</th>
+    <th>Anzahl</th>
     <th>Aktion</th>
   </tr>
 <?php
@@ -68,11 +68,13 @@ foreach ($results as $item) {
 <td>
  <form class ="w3-bar-item w3-right" method="POST" id="delete_product" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">
       <input class="w3-input" name="delete" value="' . $item["name"] . '" style="display:none">
-      <button class="w3-button w3-red">Delete</button>
+      <button class="w3-button w3-red">Löschen</button>
       </form>
 </td>
   </tr>';
 }
+
+
 
 if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
     if (isset($_POST["delete"])) {
@@ -81,7 +83,26 @@ if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
         unset($_POST["delete"]);
         header("Refresh:0");
     }
+    else if (isset($_POST["buy"])) {
+      buyCart($_SESSION["username"]);
+      header('Location: thanks_for_buying.php', true, 301);
+  }
 }
+  
+
+
 
 ?>
 </table>
+
+<?php
+if(!empty($results)){ 
+  echo '
+  <form class ="w3-bar-item w3-center" method="POST" id="buy" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">
+      <input class="w3-input" name="buy" value="' . $_SESSION['username'] . '" style="display:none">
+      <button class="w3-button w3-green w3-center">Kaufen</button>
+      </form>
+      ';
+
+}
+?>
