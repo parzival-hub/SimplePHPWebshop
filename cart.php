@@ -53,7 +53,7 @@ if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
         $product_id = sanitize_input($_POST["product_id"]);
         deleteProductCart($product_id);
         unset($_POST["delete"]);
-        header("Refresh:0");
+        header("Location:" . $_SERVER["PHP_SELF"]);
     } else if (isset($_POST["buy"])) {
         buyCart($_SESSION["username"]);
         header('Location: thanks_for_buying.php', true, 301);

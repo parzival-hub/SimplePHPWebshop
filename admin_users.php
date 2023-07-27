@@ -104,7 +104,7 @@ if (isset($_GET["s"]) && !empty($_GET["s"])) {
 
         if (empty($error)) {
             create_user($username, $password, $email, $role);
-            echo '<script type="text/javascript">window.location.reload();</script>';
+            header("Location:" . $_SERVER["PHP_SELF"]);
         } else {
             print($error);
         }
@@ -112,7 +112,7 @@ if (isset($_GET["s"]) && !empty($_GET["s"])) {
     else if (isset($_POST["delete"])) {
         deleteUser(sanitize_input($_POST["delete"]));
         unset($_POST);
-        echo '<script type="text/javascript">window.location.reload();</script>';
+        header("Location:" . $_SERVER["PHP_SELF"]);
     }
 } else {
     // Kein Admin Seite

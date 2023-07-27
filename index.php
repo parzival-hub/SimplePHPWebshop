@@ -84,7 +84,7 @@ $results = search($search_param);
 foreach ($results as $item) {
     echo '<div class="w3-container w3-center">
       <h3>' . sanitize_input($item['name']) . '</h3>
-      <a href=product_details.php?p=' . urlencode(sanitize_input($item['name'])) . '> <img src=' . sanitize_input($item["image_path"]) . ' alt="Produktbild" style="width:50%"></a>
+      <a href=product_details.php?p=' . urlencode(sanitize_input($item['name'])) . '> <img src=' . htmlspecialchars($item["image_path"]) . ' alt="Produktbild" style="width:50%"></a>
       <div class="w3-section">
         ' . sanitize_input($item["quantity"]) . ' auf Lager
         <form class= "w3-bar-item w3-center" method="POST" id="addProductToCart" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">

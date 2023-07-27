@@ -35,6 +35,13 @@ if (isset($_SESSION["role"]) && $_SESSION["role"] == 'admin') {
                 <input type="submit" value="Upload Image" name="fileUpload">
             </form>
         </div>
+
+        <div class="w3-center" style="margin-top: 50px;margin-left:50px">
+            <form action="<?php echo sanitize_input($_SERVER["PHP_SELF"]); ?>" method="POST"
+                enctype="multipart/form-data">
+                <input type="submit" value="Restock" name="restock">
+            </form>
+        </div>
     </div>
 
 
@@ -97,8 +104,7 @@ if (isset($_GET["s"]) && !empty($_GET["s"])) {
             $quantity = sanitize_input($_POST["Quantity"]);
             $image_path = sanitize_input($_POST["Image_Path"]);
             addProduct($name, $desc, $quantity, $image_path);
-            unset($_POST);
-            header('Location: admin_products.php');
+            header("Location:" . $_SERVER["PHP_SELF"]);
             exit();
         }
     } // Löschen von Produkten
@@ -106,8 +112,11 @@ if (isset($_GET["s"]) && !empty($_GET["s"])) {
         $deleteParam = sanitize_input($_POST["delete"]);
         deleteProduct($deleteParam);
         unset($_POST);
-        header('Location: admin_products.php');
+        header("Location:" . $_SERVER["PHP_SELF"]);
         exit();
+    } else if (isset($_POST["restock"])) {
+        restock();
+        print("<script>alert('Restocked!')</script>");
     } else if (isset($_POST["fileUpload"])) {
         ?><p class="w3-center" style="color:red">
     <?php
@@ -128,7 +137,7 @@ if (!file_exists("uploads")) {
         }
 
         // Check if file already exists
-        $tmp_file_name = str_replace("."+$imageFileType, "", $target_file);
+        $tmp_file_name = str_replace("." . $imageFileType, "", $target_file);
         $number = 1;
         while (file_exists($target_file)) {
             $tmp_file_name = $target_file+"-"+$number;

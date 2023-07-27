@@ -58,8 +58,6 @@ function addProduct($productName, $productDesc, $productQuant, $productImage)
         $query->bindValue("pquant", $productQuant);
         $query->bindValue("pimage", $productImage);
         $query->execute();
-    } else {
-        echo '<script type="text/javascript">alert("Produkt existiert bereits!");</script>';
     }
 }
 
