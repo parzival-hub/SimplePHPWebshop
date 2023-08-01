@@ -9,7 +9,7 @@ if (array_key_exists('valid', $_SESSION) && $_SESSION["valid"]) {
     exit();
 }
 $error = "";
-if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
+if (strtoupper($_SERVER["REQUEST_METHOD"]) === "POST") {
 
     $unsafe_username = $_POST["username"];
     $unsafe_email = $_POST["email"];
@@ -29,7 +29,7 @@ if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
         $error = "Username contains unallowed characters.";
     }
 
-    if($password != $password2){
+    if ($password != $password2) {
         $error = "Passwords do not match.";
     }
 
@@ -38,9 +38,9 @@ if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
     }
 
     if (empty($error)) {
-        create_user($username,$password,$email,"user");
+        create_user($username, $password, $email, "user");
         header("Location:index.php");
-    } 
+    }
 }
 ?>
 
@@ -76,8 +76,10 @@ if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
             </div>
             <div>
                 <?php
-        if (! empty($error))
-            echo "<p>" . sanitize_input($error) . "</p>"?>
+if (!empty($error)) {
+    echo "<p>" . sanitize_input($error) . "</p>";
+}
+?>
             </div>
             <button type="submit">Register</button>
             <footer>Already a member? <a href="login.php">Login here</a></footer>

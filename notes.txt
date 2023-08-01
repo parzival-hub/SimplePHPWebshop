@@ -1,7 +1,11 @@
 Bugs:
-
-
+1. Error Einstellungen noch ändern vor Release
+2. Auf leere Felder prüfen bei Form submit
+3. Validation von Input bei Forms
+4. SQL Objekt statisch
 
 Features:
 
 1. Im Warenkorb die Anzahl Änderung
+2. Admin Produkts Quantity ändern
+3. 

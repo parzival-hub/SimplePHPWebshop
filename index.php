@@ -8,6 +8,24 @@ if (isset($_SESSION['username']) && isset($_SESSION['role'])) {
     $loggedIn = false;
 }
 
+// Hinzufügen des Produktes zum Einkaufswagen
+if (strtoupper($_SERVER["REQUEST_METHOD"]) === "POST") {
+    if (isset($_POST["product_id"])) {
+        if (isset($_SESSION["username"])) {
+            $product_id = sanitize_input($_POST["product_id"]);
+            $quantity = sanitize_input($_POST["quantity"]);
+            if (is_numeric($quantity) && $quantity > 0) {
+                addToCart($product_id, $quantity);
+                header("Location: cart.php");
+                exit();
+            }
+        } else {
+            header("Location: login.php", true, 302);
+            exit();
+        }
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -23,16 +41,16 @@ if (isset($_SESSION['username']) && isset($_SESSION['role'])) {
 </head>
 
 <body>
+
+    <div class="top-info-bar">
+        See the <a href="challenges.php">Challenges</a>
+    </div>
     <header class="top-header">
         <h1> This is NUTS </h1>
     </header>
     <div class="w3-row">
-        <div class="w3-third" style="margin:4px 0 6px 0">
-        </div>
-
-        <div class="w3-margin-top w3-wide w3-hide-medium w3-hide-small w3-right">
-
-        </div>
+        <div class="w3-third" style="margin:4px 0 6px 0"></div>
+        <div class="w3-margin-top w3-wide w3-hide-medium w3-hide-small w3-right"></div>
     </div>
 
     <div class="w3-bar w3-theme w3-large" style="z-index:3;">
@@ -48,23 +66,21 @@ if ($loggedIn) {
     echo "<a class='w3-bar-item w3-right w3-button w3-hide-medium w3-hover-white w3-padding-16' href='login.php'>Login</a>";
 }
 
-if (isset($_SESSION["role"]) && $_SESSION["role"] == "admin") {
+if (isset($_SESSION["role"]) && $_SESSION["role"] === "admin") {
     echo "<a class='w3-bar-item w3-right w3-button w3-hide-medium w3-hover-white w3-padding-16' href='admin_users.php'>Admin</a>";
 }
 
 if ($loggedIn) {
     echo "<a class='w3-bar-item w3-right w3-button w3-hide-medium w3-hover-white w3-padding-16' href='cart.php'><img src=images/shopping-cart.png width=70% height=70%></a>";
     echo "<a class='w3-bar-item w3-right w3-button w3-hide-medium w3-hover-white w3-padding-16' href='user_profile.php'><img src=images/user.png width=70% height=70%></a>";
-    // echo "<h3>Willkommen, " . $_SESSION["username"] . "</h3>";
 }
 ?>
         <button class="w3-btn w3-bar-item w3-right w3-hide-medium w3-hover-white w3-padding-16" type="submit"
-            form="searchform">Suchen</button>
-        <form class="w3-bar-item w3-right" method="GET" id="searchform" action="<?php
-echo htmlspecialchars($_SERVER["PHP_SELF"]);
-?>">
+            form="searchform">Search</button>
+        <form class="w3-bar-item w3-right" method="GET" id="searchform"
+            action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
             <div class="w3-row">
-                <input class="w3-input" type="search" id="suche" name="s" placeholder="Suche nach Produkten...">
+                <input class="w3-input" type="search" id="suche" name="s" placeholder="Search for products...">
             </div>
         </form>
 
@@ -84,42 +100,17 @@ $results = search($search_param);
 foreach ($results as $item) {
     echo '<div class="w3-container w3-center">
       <h3>' . sanitize_input($item['name']) . '</h3>
-      <a href=product_details.php?p=' . urlencode(sanitize_input($item['name'])) . '> <img src=' . htmlspecialchars($item["image_path"]) . ' alt="Produktbild" style="width:50%"></a>
+      <a href=product_details.php?p=' . urlencode(sanitize_input($item['name'])) . '> <img src=' . htmlspecialchars($item["image_path"]) . ' style="width:50%"></a>
       <div class="w3-section">
-        ' . sanitize_input($item["quantity"]) . ' auf Lager
+        ' . sanitize_input($item["quantity"]) . ' in Stock
         <form class= "w3-bar-item w3-center" method="POST" id="addProductToCart" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">
         <input name="product_id" value="' . sanitize_input($item['id']) . '" style="display:none">
         <input style="width:60px;height:36px" type="number" min=1 name="quantity" value="1">
-        <button class="w3-button w3-green">Kaufen</button></form >
-        <a href=product_details.php?p=' . urlencode(sanitize_input($item['name'])) . '>Mehr Infos</a>
+        <button class="w3-button w3-green">Add to Cart</button></form >
+        <a href=product_details.php?p=' . urlencode(sanitize_input($item['name'])) . '>More info</a>
     </div>
 </div>';
 }
 ?>
-
-
-
     </div>
-
-
-    <?php
-
-// Hinzufügen des Produktes zum Einkaufswagen
-if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
-    if (isset($_POST["product_id"])) {
-        if (isset($_SESSION["username"])) {
-            $product_id = sanitize_input($_POST["product_id"]);
-            $quantity = sanitize_input($_POST["quantity"]);
-            if (is_numeric($quantity) && $quantity > 0) {
-                addToCart($product_id, $quantity);
-                header("Location: cart.php");
-            }
-
-        } else {
-            header("Location: login.php");
-            die();
-        }
-    }
-}
-?>
 </body>

@@ -5,12 +5,16 @@ function sanitize_input($data)
 {
     $data = trim($data);
     $data = stripslashes($data);
-    $data = htmlspecialchars($data);
     $data = str_replace("%", "", $data);
+    $data = str_replace("\"", "", $data);
+    $data = str_replace("'", "", $data);
+    $data = str_replace("\\", "", $data);
     $data = str_replace("{", "", $data);
     $data = str_replace("}", "", $data);
     $data = str_replace(";", "", $data);
     $data = str_replace("%", "", $data);
+    $data = str_replace("|", "", $data);
+    $data = htmlspecialchars($data);
     return $data;
 }
 
@@ -25,12 +29,21 @@ function loginAllowed($username, $clear_password)
     $query->bindValue(2, $password);
     $query->execute();
 
-    if ($query->rowCount() == 1) {
+    if ($query->rowCount() === 1) {
         return $query->fetch(PDO::FETCH_ASSOC);
     } else {
         return "None";
     }
 
+}
+
+function get_challenges()
+{
+    $conn = getConnection();
+    $sql = "SELECT * FROM challenges";
+    $query = $conn->prepare($sql);
+    $query->execute();
+    return $query->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function getConnection()
@@ -180,27 +193,19 @@ function deleteProductCart($product_id)
 }
 
 // Falls User noch nicht vorhanden ist, gib true zurück
-function checkUserDatabank($userName)
+function userExists($userName)
 {
     $conn = getConnection();
     $sql = "SELECT * FROM users WHERE `username`=:userParam";
     $query = $conn->prepare($sql);
     $query->bindValue("userParam", $userName);
     $query->execute();
-    $checking = [];
-    while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-        array_push($checking, $row);
-    }
-    if (empty($checking)) {
-        return true;
-    } else {
-        return false;
-    }
+    return !empty($query->fetchAll());
 }
 
 function create_user($username, $password, $email, $role)
 {
-    if (checkUserDatabank($username)) {
+    if (!userExists($username)) {
         $conn = getConnection();
         $query = $conn->prepare("INSERT INTO `users`(`username`, `password`, `email`,`role`) VALUES (:username,:pass,:email,:userRole)");
         $query->bindValue("username", $username);
@@ -208,37 +213,36 @@ function create_user($username, $password, $email, $role)
         $query->bindValue("email", $email);
         $query->bindValue("userRole", $role);
         $query->execute();
-        echo '<script type="text/javascript"> alert("Benutzer erstellt!");</script>';
     }
 }
 
-function deleteUser($username)
+function deleteUser($user_id)
 {
     $conn = getConnection();
-    $sql = "DELETE FROM users WHERE `username`=:delParam";
+    $sql = "DELETE FROM users WHERE `id`=:user_id";
     $query = $conn->prepare($sql);
-    $query->bindValue("delParam", $username);
+    $query->bindValue("user_id", $user_id);
     $query->execute();
-    $sql = "DROP TABLE " . $username;
-    $query = $conn->prepare($sql);
+
+    $query = $conn->prepare("DELETE FROM cart WHERE user_id=:user_id");
+    $query->bindValue("user_id", $user_id);
     $query->execute();
 }
 
-function changeUser($username, $changeParam, $changePlace)
+function changeUser($changeParam, $changePlace)
 {
     $conn = getConnection();
-    if ($changePlace != "password") {
-        $sql = "UPDATE users SET " . $changePlace . " = '" . $changeParam . "' WHERE username = '" . $username . "'";
+    if ($changePlace === "password") {
+        $sql = "UPDATE users SET password = :pass WHERE id = :user_id";
         $query = $conn->prepare($sql);
+        $query->bindValue("user_id", $_SESSION["user_id"]);
+        $query->bindValue("pass", hash_hmac("sha512", $changeParam, "FJk!br!5"));
         $query->execute();
-        if ($changePlace == "username") {
-            $sql = "ALTER TABLE " . $username . " RENAME TO " . $changeParam;
-            $query = $conn->prepare($sql);
-            $query->execute();
-        }
-    } else if ($changePlace == "password") {
-        $sql = "UPDATE users SET " . $changePlace . " = '" . hash_hmac("sha512", $changeParam, "FJk!br!5") . "' WHERE username = '" . $username . "'";
+    } else if ($changePlace === "username" || $changePlace === "email") {
+        $sql = "UPDATE users SET $changePlace = :changeParam WHERE id = :user_id";
         $query = $conn->prepare($sql);
+        $query->bindValue("changeParam", $changeParam);
+        $query->bindValue("user_id", $_SESSION["user_id"]);
         $query->execute();
     }
 }
@@ -260,6 +264,79 @@ function buyCart()
     $query->execute();
 }
 
+function uploadValid($myfile)
+{
+    $target_dir = "uploads/";
+    $uploadFileName = sanitize_input($myfile["name"]);
+    $target_file = $target_dir . basename($uploadFileName);
+    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+    // Check if image file is a actual image or fake image
+    if (!getimagesize($myfile["tmp_name"])) {
+        return "File is not an image.";
+    }
+
+    // Check file size
+    if ($myfile["size"] > 1000000) {
+        return "Sorry, your file is too large. Only files under 1 MB are allowed.";
+    }
+
+    // Allow certain file formats
+    if (!in_array($imageFileType, ["jpg", "png", "jpeg", "gif"])) {
+        return "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+    }
+
+    //Check Content Type
+    if (!in_array($myfile["type"], ["image/jpg", "image/png", "image/jpeg", "image/gif"])) {
+        return "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+    }
+
+    //Check Image integrity
+    if (!check_image_integrity($myfile["tmp_name"])) {
+        return "Image did not pass security test.";
+    }
+}
+
+function check_image_integrity($file)
+{
+    // Check if the file exists and is an actual file
+    if (!is_file($file)) {
+        return false; // File not found or not a valid file
+    }
+
+    // Check if image file is a valid image
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mimetype = finfo_file($finfo, $file);
+    finfo_close($finfo);
+
+    // Supported image types: PNG, JPG, GIF
+    if ($mimetype !== "image/png" && $mimetype !== "image/jpeg" && $mimetype !== "image/gif") {
+        return false; // Invalid image
+    }
+
+    // For PNG, JPG, and GIF, perform basic header checks
+    if ($mimetype === "image/png") {
+        // Check for PNG header
+        $header = file_get_contents($file, false, null, 0, 8);
+        return strncmp($header, "\x89PNG\x0D\x0A\x1A\x0A", 8) === 0;
+    }
+
+    if ($mimetype === "image/jpeg") {
+        // Check for JPG header
+        $header = file_get_contents($file, false, null, 0, 2);
+        return strncmp($header, "\xFF\xD8", 2) === 0;
+    }
+
+    if ($mimetype === "image/gif") {
+        // Check for GIF header
+        $header = file_get_contents($file, false, null, 0, 6);
+        return strncmp($header, "GIF87a", 6) === 0 || strncmp($header, "GIF89a", 6) === 0;
+    }
+
+    // If we reach here, something went wrong, so return false
+    return false;
+}
+
 function restock()
 {
     $conn = getConnection();
@@ -274,4 +351,29 @@ function restock()
         $query->bindValue(":product_id", $productId);
         $query->execute();
     }
+}
+
+function deleteImage($filename)
+{
+    $filename = basename($filename);
+    $filename = sanitize_input($filename);
+    error_log("isfile: " . is_file(realpath("uploads/" . $filename)));
+    $fileCheckOk = check_image_integrity(realpath("uploads/" . $filename));
+    if ($fileCheckOk) {
+        unlink(realpath("uploads/" . $filename));
+    }
+}
+
+function getUploadedFilesOptions($directoryPath)
+{
+    $selectMenuOptions = "";
+    $files = scandir($directoryPath);
+    print_r($files);
+    foreach ($files as $file) {
+        if ($file !== '.' && $file !== '..' && is_file($directoryPath . DIRECTORY_SEPARATOR . $file)) {
+            $selectMenuOptions .= '<option value="' . sanitize_input($file) . '">' . sanitize_input($file) . '</option>';
+        }
+    }
+
+    return $selectMenuOptions;
 }

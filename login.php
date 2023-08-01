@@ -12,7 +12,7 @@ if (isset($_SESSION["username"])) {
 }
 
 // Bearbeiten des Requests
-if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
+if (strtoupper($_SERVER["REQUEST_METHOD"]) === "POST") {
     $unsafe_name = $_POST["username"];
     $pass = $_POST["password"];
     $name = sanitize_input($unsafe_name);
