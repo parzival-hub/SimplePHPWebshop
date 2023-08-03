@@ -1,63 +1,82 @@
+/* Global Styles */
+body {
+	margin: 0;
+	font-family: sans-serif;
+}
+
+/* Top Header */
 .top-header {
 	width: 100%;
 	background-image: url(images/background_haselnuts.jpg);
 	background-size: cover;
 	background-position: center;
-	margin: 0px;
+	padding: 0;
 }
 
-.top-header>h1 {
+.top-header h1 {
 	color: white;
 	background-color: rgba(0, 0, 0, 0.3);
-	padding: 1em 1em;
-	font-family: sans-serif;
+	padding: 1em;
+	font-size: 24px;
 	text-align: center;
-	margin: 0px;
+	margin: 0;
 }
 
+/* Top Information Bar */
 .top-info-bar {
 	background-color: #f2f2f2;
 	padding: 10px;
-	text-align: center;
 	font-size: 18px;
+	text-align: center;
 }
 
+/* Table Styles */
 table {
-	font-family: arial, sans-serif;
-	border-collapse: collapse;
 	width: 100%;
+	border-collapse: collapse;
 }
 
 td,
 th {
 	border: 1px solid #dddddd;
-	text-align: left;
 	padding: 8px;
 }
 
 tr:nth-child(even) {
-	background-color: #dddddd;
+	background-color: #f2f2f2;
 }
 
 .grid-container {
 	display: grid;
-	grid-template-columns: auto auto auto;
+	grid-template-columns: repeat(2, 1fr);
+	grid-gap: 10px;
 	padding: 10px;
 }
 
+/* Grid Item */
 .grid-item {
 	border: 1px solid rgba(0, 0, 0, 0.8);
-	padding: 20px;
+	padding: 30px;
 	font-size: 30px;
 	text-align: center;
 }
 
+/* Challenge Item */
 .challenge {
-	margin-bottom: 10px;
-	padding: 10px;
-	padding-bottom: 20px;
+	margin-bottom: 20px;
+	padding: 20px;
 	border: 1px solid #ccc;
 	background-color: #f9f9f9;
+	text-align: left;
+	margin: 10px;
+}
+
+.challenge h2 {
+	margin-top: 0;
+}
+
+.challenge p {
+	margin: 5px 0;
 }
 
 .solved {

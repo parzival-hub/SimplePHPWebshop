@@ -25,7 +25,7 @@ if (strtoupper($_SERVER["REQUEST_METHOD"]) === "POST") {
         }
     }
 }
-
+include "header.php";
 ?>
 
 <!DOCTYPE html>
@@ -41,51 +41,6 @@ if (strtoupper($_SERVER["REQUEST_METHOD"]) === "POST") {
 </head>
 
 <body>
-
-    <div class="top-info-bar">
-        See the <a href="challenges.php">Challenges</a>
-    </div>
-    <header class="top-header">
-        <h1> This is NUTS </h1>
-    </header>
-    <div class="w3-row">
-        <div class="w3-third" style="margin:4px 0 6px 0"></div>
-        <div class="w3-margin-top w3-wide w3-hide-medium w3-hide-small w3-right"></div>
-    </div>
-
-    <div class="w3-bar w3-theme w3-large" style="z-index:3;">
-        <a href="index.php">
-            <img src="images/nuts_logo.png" alt="ThisIsNutsLogo" width="70" height="60">
-        </a>
-
-        <?php
-
-if ($loggedIn) {
-    echo "<a class='w3-bar-item w3-right w3-button w3-hide-medium w3-hover-white w3-padding-16' href='logout.php'>Logout</a>";
-} else {
-    echo "<a class='w3-bar-item w3-right w3-button w3-hide-medium w3-hover-white w3-padding-16' href='login.php'>Login</a>";
-}
-
-if (isset($_SESSION["role"]) && $_SESSION["role"] === "admin") {
-    echo "<a class='w3-bar-item w3-right w3-button w3-hide-medium w3-hover-white w3-padding-16' href='admin_users.php'>Admin</a>";
-}
-
-if ($loggedIn) {
-    echo "<a class='w3-bar-item w3-right w3-button w3-hide-medium w3-hover-white w3-padding-16' href='cart.php'><img src=images/shopping-cart.png width=70% height=70%></a>";
-    echo "<a class='w3-bar-item w3-right w3-button w3-hide-medium w3-hover-white w3-padding-16' href='user_profile.php'><img src=images/user.png width=70% height=70%></a>";
-}
-?>
-        <button class="w3-btn w3-bar-item w3-right w3-hide-medium w3-hover-white w3-padding-16" type="submit"
-            form="searchform">Search</button>
-        <form class="w3-bar-item w3-right" method="GET" id="searchform"
-            action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-            <div class="w3-row">
-                <input class="w3-input" type="search" id="suche" name="s" placeholder="Search for products...">
-            </div>
-        </form>
-
-    </div>
-
     <div class="grid-container">
 
         <?php

@@ -38,6 +38,9 @@ if (strtoupper($_SERVER["REQUEST_METHOD"]) === "POST") {
 include "header.php"
 ?>
 
+<head>
+    <link rel="stylesheet" href="style.css">
+</head>
 <!DOCTYPE html>
 <html lang="en">
 

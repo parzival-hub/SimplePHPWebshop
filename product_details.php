@@ -2,11 +2,11 @@
 include 'functions.php';
 session_start();
 
-if (isset($_SESSION['username']) && isset($_SESSION['role']))
+if (isset($_SESSION['username']) && isset($_SESSION['role'])) {
     $loggedIn = true;
-else
+} else {
     $loggedIn = false;
-
+}
 
 include "header.php";
 ?>
@@ -20,7 +20,7 @@ include "header.php";
             <?php
 $productName = sanitize_input($_GET["p"]);
 $productDetails = getProduct($productName);
-if ($productDetails != NULL) {
+if ($productDetails != null) {
     echo "<h1>" . $productName . "</h1>";
     echo "<p>" . $productDetails["quantity"] . " auf Lager</p>";
     echo "<img src=" . $productDetails["image_path"] . " style='width:30%'>";

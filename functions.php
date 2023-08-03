@@ -37,6 +37,29 @@ function loginAllowed($username, $clear_password)
 
 }
 
+function solve_challenge($id, $solution)
+{
+    $conn = getConnection();
+    $sql = "SELECT solution FROM challenges where id=:id";
+    $query = $conn->prepare($sql);
+    $query->bindValue("id", $id);
+    $query->execute();
+    if ($query->fetchColumn() === $solution) {
+        $sql = "UPDATE challenges SET solved=1 where id=:id";
+        $query = $conn->prepare($sql);
+        $query->bindValue("id", $id);
+        $query->execute();
+    }
+}
+
+function reset_challenges()
+{
+    $conn = getConnection();
+    $sql = "UPDATE challenges SET solved=0";
+    $query = $conn->prepare($sql);
+    $query->execute();
+}
+
 function get_challenges()
 {
     $conn = getConnection();
