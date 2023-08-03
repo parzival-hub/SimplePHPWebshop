@@ -72,38 +72,38 @@ else if (isset($_POST["delete_image"])) {
 <?php include "header.php";?>
 
 <div class="w3-center">
-    <a class='w3-bar-item w3-button w3-hover-white' href='admin_users.php'>Benutzer</a>
-    <a class='w3-bar-item w3-button w3-hover-white' href='admin_products.php'>Produkte</a>
+    <a class='w3-bar-item w3-button w3-gray w3-hover-white' href='admin_users.php'>Benutzer</a>
+    <a class='w3-bar-item w3-button w3-gray w3-hover-white' href='admin_products.php'>Produkte</a>
 </div>
 
 <div style="margin:10px;margin-top:30px">
-    <div class="w3-row" style="display:flex">
+    <div style="  display: flex;  justify-content: center; ">
         <form class="w3-center" method="POST" id="add_product"
             action="<?php echo sanitize_input($_SERVER["PHP_SELF"]); ?>">
-            <input name="add" value="true" style="display: none">
-            <input type="text" name="name" placeholder="Name">
-            <input type="text" name="description" placeholder="Description">
-            <input type="text" name="quantity" placeholder="Quantity">
+            <input class="w3-input" name="add" value="true" style="display: none">
+            <input class="w3-input" type="text" name="name" placeholder="Name">
+            <input class="w3-input" type="text" name="description" placeholder="Description">
+            <input class="w3-input" type="text" name="quantity" placeholder="Quantity">
             <div style="display:flex">
                 <select id="add_image_path" name="image">
                     <?php echo getUploadedFilesOptions("uploads"); ?>
                 </select>
-                <button class="w3-button w3-red" onclick="sendDeleteAjaxRequest()">Remove</button>
+                <button style="width:100%" class="w3-button w3-red" onclick="sendDeleteAjaxRequest()">Remove</button>
             </div>
-            <button class="w3-buttton" type="submit" form="add_product">Add</button>
+            <button style="width:100%" class="w3-button w3-green">Add</button>
         </form>
 
-        <div style="margin-left:50px">
+        <div style="margin-left:150px">
             <form action="<?php echo sanitize_input($_SERVER["PHP_SELF"]); ?>" method="POST"
                 enctype="multipart/form-data">
                 Select image to upload:
-                <input type="file" name="fileToUpload" id="fileToUpload">
-                <button class="w3-buttton" type="submit">Upload</button>
+                <input class="w3-input" type="file" name="fileToUpload" id="fileToUpload">
+                <button class="w3-button w3-green">Upload</button>
             </form>
             <?php print("<p style='color:red'>$checkError</p>");?>
             <form style="margin-top:50px" action="<?php echo sanitize_input($_SERVER["PHP_SELF"]); ?>" method="POST"
                 enctype="multipart/form-data">
-                <input class="w3-red" type="submit" value="Restock all products" name="restock">
+                <input class="w3-button w3-red" type="submit" value="Restock all products" name="restock">
             </form>
         </div>
     </div>

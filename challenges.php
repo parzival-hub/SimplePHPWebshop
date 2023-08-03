@@ -7,8 +7,9 @@ include 'functions.php';
 include "header.php";
 error_reporting(E_ERROR | E_PARSE);
 
-// print(hash_hmac("sha512", "C-ABCDE-FGHIJ-KLMNO", "FJk!br!5"));
-// print(hash_hmac("sha512", "C-AAAAA-BBBBB-CCCCC", "FJk!br!5"));
+print(hash_hmac("sha512", "C-Thats-AWier-dName", "FJk!br!5"));
+print("|");
+print(hash_hmac("sha512", "C-iWasH-idden-SoBad", "FJk!br!5"));
 
 if (isset($_POST["solution"]) && isset($_POST["id"])) {
     solve_challenge(sanitize_input($_POST["id"]), hash_hmac("sha512", $_POST["solution"], "FJk!br!5"));

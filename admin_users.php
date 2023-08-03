@@ -56,11 +56,11 @@ if (isset($_SESSION["role"]) && $_SESSION["role"] === 'admin') {
             <h4>Add User:</h4>
             <form class="w3-center" method="POST" id="add_user"
                 action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-                <input name="add" value="true" style="display: none">
-                <input type="text" name="username" placeholder="Username">
-                <input type="text" name="email" placeholder="E-Mail">
-                <input type="password" name="password" placeholder="password">
-                <select name="role" id="role">
+                <input class="w3-input" name="add" value="true" style="display: none">
+                <input class="w3-input" type="text" name="username" placeholder="Username">
+                <input class="w3-input" type="text" name="email" placeholder="E-Mail">
+                <input class="w3-input" type="password" name="password" placeholder="password">
+                <select class="w3-select" name="role" id="role">
                     <option value="user">User</option>
                     <option value="admin">Admin</option>
                 </select>
@@ -93,6 +93,10 @@ if (isset($_GET["s"]) && !empty($_GET["s"])) {
 
     $results = searchUser($search_param);
     foreach ($results as $item) {
+        if ($item["active"] === 0) {
+            continue;
+        }
+
         echo '  <tr>
     <td>' . sanitize_input($item["username"]) . '</td>
     <td>' . sanitize_input($item["email"]) . '</td>

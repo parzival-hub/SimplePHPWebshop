@@ -9,3 +9,13 @@ Features:
 1. Im Warenkorb die Anzahl Änderung
 2. Admin Produkts Quantity ändern
 3. 
+
+
+
+
+- AJAX Calls offenbaren backend schnittstelle zu alter Signup Schnittstelle bei der man im post die rolle setzen kann
+- SQLI in Details
+- File include in über upload mit file traversal namen (liest upload folder aus html aus)
+
+
+- XSS in eigenen namen Ändern, dann Admin session klauen
