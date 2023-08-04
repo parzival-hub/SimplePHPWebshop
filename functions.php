@@ -4,21 +4,12 @@ error_reporting(E_ERROR | E_PARSE);
 function sanitize_input($data)
 {
     $data = trim($data);
-    $data = stripslashes($data);
-    $data = str_replace("%", "", $data);
-    $data = str_replace("\"", "", $data);
-    $data = str_replace("'", "", $data);
-    $data = str_replace("\\", "", $data);
-    $data = str_replace("{", "", $data);
-    $data = str_replace("}", "", $data);
-    $data = str_replace(";", "", $data);
-    $data = str_replace("%", "", $data);
-    $data = str_replace("|", "", $data);
+    $data = preg_replace("/[^a-zA-Z0-9üäöÜÄÖ\s@\.\/]/", "", $data);
     $data = htmlspecialchars($data);
     return $data;
 }
 
-function loginAllowed($username, $clear_password)
+function loginUser($username, $clear_password)
 {
     $password = hash_hmac("sha512", $clear_password, "FJk!br!5");
     $conn = getConnection();
@@ -79,6 +70,10 @@ function getConnection()
 
 function addProduct($productName, $productDesc, $productQuant, $productImage)
 {
+    if (!file_exists(realpath($_SERVER['DOCUMENT_ROOT'] . $productImage))) {
+        return;
+    }
+
     $conn = getConnection();
     $sql = "SELECT * FROM `products` WHERE `name` = :searchq";
     $query = $conn->prepare($sql);
@@ -89,10 +84,10 @@ function addProduct($productName, $productDesc, $productQuant, $productImage)
     if (!$product) {
         $sql = "INSERT INTO `products`(`name`, `description`, `quantity`, `image_path`) VALUES (:pname,:pdesc,:pquant,:pimage)";
         $query = $conn->prepare($sql);
-        $query->bindValue("pname", $productName);
-        $query->bindValue("pdesc", $productDesc);
-        $query->bindValue("pquant", $productQuant);
-        $query->bindValue("pimage", $productImage);
+        $query->bindValue("pname", sanitize_input($productName));
+        $query->bindValue("pdesc", sanitize_input($productDesc));
+        $query->bindValue("pquant", sanitize_input($productQuant));
+        $query->bindValue("pimage", sanitize_input($productImage));
         $query->execute();
     }
 }
@@ -131,9 +126,20 @@ function searchUser($searchParam)
     $conn = getConnection();
     $sql = "SELECT * FROM `users` WHERE `username` LIKE :searchq";
     $query = $conn->prepare($sql);
-    $query->bindValue("searchq", "%" . $searchParam . "%");
+    $query->bindValue("searchq", "%" . sanitize_input($searchParam) . "%");
     $query->execute();
     return $query->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getUserEmail()
+{
+    $conn = getConnection();
+    $sql = "SELECT * FROM `users` WHERE `id` = :user_id";
+    $query = $conn->prepare($sql);
+    $query->bindValue("user_id", $_SESSION["user_id"]);
+    $query->execute();
+    $row = $query->fetch(PDO::FETCH_ASSOC);
+    return $row["email"];
 }
 
 function addToCart($product_id, $quantity)
@@ -285,6 +291,32 @@ function buyCart()
     $query = $conn->prepare("DELETE FROM cart WHERE user_id=:user_id");
     $query->bindValue("user_id", $_SESSION["user_id"]);
     $query->execute();
+}
+
+function uploadFile($uploadFile)
+{
+    if (!file_exists("uploads")) {
+        mkdir("uploads", 0700, true);
+    }
+    $target_dir = "uploads/";
+    $uploadFileName = sanitize_input($uploadFile["name"]);
+    $target_file = $target_dir . basename($uploadFileName);
+    $checkError = uploadValid($uploadFile);
+    if (empty($checkError)) {
+        if (move_uploaded_file($uploadFile["tmp_name"], $target_file)) {
+            $_SESSION["uploadSuccess"] = "The file " . $uploadFileName . " has been uploaded to /webshop/uploads/" . $uploadFileName;
+            header("Location: admin_products.php");
+            exit();
+        } else {
+            $_SESSION["error"] = "An unknown error happend. Please try again later.";
+            header("Location: admin_products.php");
+            exit();
+        }
+    } else {
+        $_SESSION["error"] = $checkError;
+        header("Location: admin_products.php");
+        exit();
+    }
 }
 
 function uploadValid($myfile)

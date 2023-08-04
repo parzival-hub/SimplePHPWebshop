@@ -3,45 +3,12 @@ session_start();
 include 'functions.php';
 error_reporting(E_ERROR | E_PARSE);
 
-// Redirect zum login
-if (array_key_exists('valid', $_SESSION) && $_SESSION["valid"]) {
+// Redirect zum index
+if (isset($_SESSION["role"])) {
     header('Location: index.php', true, 301);
     exit();
 }
-$error = "";
-if (strtoupper($_SERVER["REQUEST_METHOD"]) === "POST") {
 
-    $unsafe_username = $_POST["username"];
-    $unsafe_email = $_POST["email"];
-    //Wird später gehasht
-    $password = $_POST["password"];
-    $password2 = $_POST["password2"];
-
-    $username = sanitize_input($unsafe_username);
-    $email = sanitize_input($unsafe_email);
-    $role = sanitize_input($_POST["Rolle"]);
-
-    if ($unsafe_email != $email) {
-        $error = "Email contains unallowed characters.";
-    }
-
-    if ($unsafe_username != $username) {
-        $error = "Username contains unallowed characters.";
-    }
-
-    if ($password != $password2) {
-        $error = "Passwords do not match.";
-    }
-
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = "Incorrect E-Mail format.";
-    }
-
-    if (empty($error)) {
-        create_user($username, $password, $email, "user");
-        header("Location:index.php");
-    }
-}
 ?>
 
 <!DOCTYPE html>
@@ -56,7 +23,7 @@ if (strtoupper($_SERVER["REQUEST_METHOD"]) === "POST") {
 
 <body>
     <main>
-        <form action="register.php" method="post">
+        <form action="api.php" method="post">
             <h1>Sign Up</h1>
             <div>
                 <label for="username">Username:</label>
@@ -76,8 +43,8 @@ if (strtoupper($_SERVER["REQUEST_METHOD"]) === "POST") {
             </div>
             <div>
                 <?php
-if (!empty($error)) {
-    echo "<p>" . sanitize_input($error) . "</p>";
+if (!empty($_SESSION["error"])) {
+    echo "<p>" . sanitize_input($_SESSION["error"]) . "</p>";
 }
 ?>
             </div>

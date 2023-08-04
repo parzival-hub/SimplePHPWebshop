@@ -2,29 +2,15 @@
 include 'functions.php';
 session_start();
 error_reporting(E_ERROR | E_PARSE);
-if (!isset($_SESSION["username"])) {
+if (!isset($_SESSION["user_id"])) {
     header('Location: login.php', true, 301);
     exit();
-}
-
-if (strtoupper($_SERVER["REQUEST_METHOD"]) === "POST") {
-    if (isset($_POST["product_id"])) {
-        $product_id = sanitize_input($_POST["product_id"]);
-        deleteProductCart($product_id);
-        unset($_POST["delete"]);
-        header("Location:" . sanitize_input($_SERVER["PHP_SELF"]));
-    } else if (isset($_POST["buy"])) {
-        buyCart($_SESSION["username"]);
-        header('Location: thanks_for_buying.php', true, 301);
-    }
 }
 ?>
 
 <?php include "header.php";?>
 
-<form class="w3-bar-item w3-right" method="GET" id="search" action="<?php
-echo htmlspecialchars($_SERVER["PHP_SELF"]);
-?>">
+<form class="w3-bar-item w3-right" method="GET" id="search" action="cart.php">
     <div class="w3-center" style="margin:10px;display:flex">
         <input class="w3-input" type="search" id="suche" name="s" placeholder="Filter products...">
         <button class="w3-button" type="submit" form="search">Search</button>
@@ -51,8 +37,9 @@ foreach ($results as $item) {
     <td>' . sanitize_input($item["description"]) . '</td>
     <td>' . sanitize_input($item["quantity"]) . '</td>
 <td>
- <form class ="w3-bar-item w3-right" method="POST" id="delete_product" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">
-      <input class="w3-input" name="product_id" value="' . $item["id"] . '" style="display:none">
+ <form class ="w3-bar-item w3-right" method="POST" id="delete_product" action="api.php">
+      <input class="w3-input" name="product_id" value="' . sanitize_input($item["id"]) . '" style="display:none">
+      <input class="w3-input" name="in_cart" style="display:none">
       <button class="w3-button w3-red">Remove</button>
       </form>
 </td>
@@ -66,8 +53,9 @@ if (empty($results)) {
     echo "<h3 style='margin-left:10px'>No items in cart</h3>";
 } else {
     echo '
-  <form class ="w3-bar-item w3-center" method="POST" id="buy" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">
-      <input class="w3-input" name="buy" value="' . $_SESSION['username'] . '" style="display:none">
+  <form class ="w3-bar-item w3-center" method="POST" id="buy" action="api.php">
+      <input class="w3-input" name="buy" style="display:none">
+      <input class="w3-input" name="in_cart" style="display:none">
       <button class="w3-button w3-green w3-center">Place order</button>
       </form>
       ';

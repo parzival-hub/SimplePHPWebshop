@@ -20,51 +20,6 @@ if ($_SESSION["role"] !== 'admin') {
 <?php
 exit();
 }
-
-// Hinzufügen von Produkten
-if (isset($_POST["add"])) {
-    $addParam = sanitize_input($_POST["add"]);
-    if ($addParam === "true") {
-        $name = sanitize_input($_POST["name"]);
-        $desc = sanitize_input($_POST["description"]);
-        $quantity = sanitize_input($_POST["quantity"]);
-        $image_path = basename(sanitize_input($_POST["image"]));
-        addProduct($name, $desc, $quantity, "/webshop/uploads/" . $image_path);
-        header("Location:" . sanitize_input($_SERVER["PHP_SELF"]));
-        exit();
-    }
-} // Löschen von Produkten
-else if (isset($_POST["delete"])) {
-    $deleteParam = sanitize_input($_POST["delete"]);
-    deleteProduct($deleteParam);
-    unset($_POST);
-    header("Location:" . sanitize_input($_SERVER["PHP_SELF"]));
-    exit();
-} else if (isset($_POST["restock"])) {
-    restock();
-    print("<script>alert('Restocked!')</script>");
-} else if (isset($_FILES["fileToUpload"])) {
-    if (!file_exists("uploads")) {
-        mkdir("uploads", 0700, true);
-    }
-    $target_dir = "uploads/";
-    $uploadFileName = sanitize_input($_FILES["fileToUpload"]["name"]);
-    $target_file = $target_dir . basename($uploadFileName);
-    $checkError = uploadValid($_FILES["fileToUpload"]);
-    if (empty($checkError)) {
-        if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-            echo "<p class='w3-center' style='color:green'>The file " . $uploadFileName . " has been uploaded to /webshop/uploads/" . $uploadFileName . "</p>";
-        } else {
-            echo "<p style='color:red'>Sorry, there was an error uploading your file.</p>";
-        }
-    }
-} // Löschen von Uploads
-else if (isset($_POST["delete_image"])) {
-    $image_name = sanitize_input($_POST["delete_image"]);
-    deleteImage($image_name);
-    header("Location:" . $_SERVER["PHP_SELF"]);
-    exit();
-}
 ?>
 
 <html>
@@ -72,15 +27,32 @@ else if (isset($_POST["delete_image"])) {
 <?php include "header.php";?>
 
 <div class="w3-center">
-    <a class='w3-bar-item w3-button w3-gray w3-hover-white' href='admin_users.php'>Benutzer</a>
-    <a class='w3-bar-item w3-button w3-gray w3-hover-white' href='admin_products.php'>Produkte</a>
+    <a class='w3-bar-item w3-button' href='admin_users.php'>Benutzer</a>
+    <a class='w3-bar-item w3-gray w3-button' href='admin_products.php'>Produkte</a>
 </div>
 
-<div style="margin:10px;margin-top:30px">
-    <div style="  display: flex;  justify-content: center; ">
-        <form class="w3-center" method="POST" id="add_product"
-            action="<?php echo sanitize_input($_SERVER["PHP_SELF"]); ?>">
-            <input class="w3-input" name="add" value="true" style="display: none">
+<div style="margin:10px;margin-top:60px">
+    <div style="display: flex;  justify-content: center;">
+        <form action=" api.php" method="POST" enctype="multipart/form-data">
+            Select image to upload:
+            <input class="w3-input" type="file" name="fileToUpload" id="fileToUpload">
+            <button class="w3-button w3-green">Upload</button>
+            <div style="width:200px">
+                <?php
+if (isset($_SESSION["error"])) {
+    print("<p style='color:red'>" . sanitize_input($_SESSION["error"]) . "</p>");
+    unset($_SESSION["error"]);
+}
+
+if (isset($_SESSION["uploadSuccess"])) {
+    print("<p class='w3-center' style='color:green'>" . sanitize_input($_SESSION["uploadSuccess"]) . "</p>");
+    unset($_SESSION["uploadSuccess"]);
+}
+?></div>
+        </form>
+
+        <form style="margin-left:150px" class="w3-center" method="POST" id="add_product" action="api.php">
+            <input class="w3-input" name="addProduct" style="display: none">
             <input class="w3-input" type="text" name="name" placeholder="Name">
             <input class="w3-input" type="text" name="description" placeholder="Description">
             <input class="w3-input" type="text" name="quantity" placeholder="Quantity">
@@ -88,36 +60,26 @@ else if (isset($_POST["delete_image"])) {
                 <select id="add_image_path" name="image">
                     <?php echo getUploadedFilesOptions("uploads"); ?>
                 </select>
-                <button style="width:100%" class="w3-button w3-red" onclick="sendDeleteAjaxRequest()">Remove</button>
+                <button id="delete_image_btn" style="width:100%" class="w3-button w3-red">Remove</button>
             </div>
-            <button style="width:100%" class="w3-button w3-green">Add</button>
+            <button type="submit" style="width:100%" class="w3-button w3-green">Add</button>
+            <?php if (isset($_SESSION["adderror"])) {
+    print("<p style='color:red'>" . $_SESSION["adderror"] . "</p>");
+    unset($_SESSION["adderror"]);
+}?>
         </form>
-
-        <div style="margin-left:150px">
-            <form action="<?php echo sanitize_input($_SERVER["PHP_SELF"]); ?>" method="POST"
-                enctype="multipart/form-data">
-                Select image to upload:
-                <input class="w3-input" type="file" name="fileToUpload" id="fileToUpload">
-                <button class="w3-button w3-green">Upload</button>
-            </form>
-            <?php print("<p style='color:red'>$checkError</p>");?>
-            <form style="margin-top:50px" action="<?php echo sanitize_input($_SERVER["PHP_SELF"]); ?>" method="POST"
-                enctype="multipart/form-data">
-                <input class="w3-button w3-red" type="submit" value="Restock all products" name="restock">
-            </form>
-        </div>
     </div>
 
-
-    <form class="w3-bar-item w3-right" method="GET" id="search"
-        action="<?php echo sanitize_input($_SERVER["PHP_SELF"]); ?>">
-        <div class="w3-center">
-            <input class="w3-input" type="search" id="suche" name="s" placeholder="Filter Produkte...">
+    <div style="display:flex;margin-top:60px;" class="w3-right">
+        <form action="api.php" method="POST" enctype="multipart/form-data" style="margin:10px">
+            <input class="w3-button w3-red" type="submit" value="Restock all products" name="restock">
+        </form>
+        <form method="GET" id="search" action="admin_products.php" style="display:flex">
+            <input class="w3-input" type="search" id="suche" name="s" placeholder="Filter products...">
             <button class="w3-btn w3-bar-item w3-right w3-hide-medium w3-hover-white w3-padding-16" type="submit"
-                form="search">Suchen</button>
-        </div>
-    </form>
-
+                form="search">Search</button>
+        </form>
+    </div>
     <table>
         <tr>
             <th>Name</th>
@@ -141,7 +103,7 @@ foreach ($results as $item) {
     <td>' . sanitize_input($item["quantity"]) . '</td>
     <td>' . sanitize_input($item["image_path"]) . '</td>
 <td>
- <form class ="w3-bar-item w3-right" method="POST" id="delete_product" action="' . sanitize_input($_SERVER["PHP_SELF"]) . '">
+ <form class ="w3-bar-item w3-right" method="POST" id="delete_product" action="api.php">
       <input class="w3-input" name="delete" value="' . sanitize_input($item["name"]) . '" style="display:none">
       <button class="w3-button w3-red">Delete</button>
       </form>
@@ -157,19 +119,21 @@ foreach ($results as $item) {
 
 <script>
 function sendDeleteAjaxRequest() {
-    // Get the selected value from the <select> element
-    const selectElement = document.getElementById('add_image_path');
-    const selectedValue = selectElement.value;
-
-    // Make a simple AJAX POST request using the fetch API
-    fetch(window.location.href, {
+    const path = document.getElementById('add_image_path').value;
+    fetch("api.php", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: 'delete_image=' + encodeURIComponent(selectedValue),
+        body: 'delete_image=' + encodeURIComponent(path),
     });
 }
+
+document.getElementById('delete_image_btn').addEventListener('click', function(event) {
+    event.preventDefault();
+    sendDeleteAjaxRequest();
+    window.location.reload();
+});
 </script>
 
 </html>

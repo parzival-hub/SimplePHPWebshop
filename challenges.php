@@ -2,22 +2,14 @@
 <html>
 
 <?php
-
+session_start();
 include 'functions.php';
 include "header.php";
 error_reporting(E_ERROR | E_PARSE);
 
-print(hash_hmac("sha512", "C-Thats-AWier-dName", "FJk!br!5"));
-print("|");
-print(hash_hmac("sha512", "C-iWasH-idden-SoBad", "FJk!br!5"));
+#print(hash_hmac("sha512", "C-Thats-AWier-dName", "FJk!br!5"));
+#print(hash_hmac("sha512", "C-iWasH-idden-SoBad", "FJk!br!5"));
 
-if (isset($_POST["solution"]) && isset($_POST["id"])) {
-    solve_challenge(sanitize_input($_POST["id"]), hash_hmac("sha512", $_POST["solution"], "FJk!br!5"));
-}
-
-if (isset($_POST["reset"])) {
-    reset_challenges();
-}
 ?>
 
 <body>
@@ -42,7 +34,7 @@ if (!empty($results)) {
 
         <p style="text-align:left;margin:30px"><?php echo sanitize_input($description) ?></p>
         <?php if (!$row["solved"]) {?>
-        <form method='POST' action='<?php echo sanitize_input($_SERVER["PHP_SELF"]) ?>'>
+        <form method='POST' action='api.php'>
             <input name='solution' placeholder='C-XXXXX-XXXXX-XXXXX'>
             <input name='id' style="display: none" value='<?php echo sanitize_input($id) ?>'>
             <button class="w3-button w3-black">Submit</button>
@@ -58,8 +50,7 @@ if (!empty($results)) {
 $conn = null;
 ?>
 
-    <form method='POST' action='<?php echo sanitize_input($_SERVER["PHP_SELF"]) ?>'>
-        <h1 class="w3-red" style="margin-top:200px">Reset</h1>
+    <form method='POST' action='api.php' style="margin:10px">
         <input name='reset' style="display: none">
         <button class="w3-button w3-red">Reset all challenges</button>
     </form>

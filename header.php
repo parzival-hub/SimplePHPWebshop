@@ -17,7 +17,7 @@
 
     <?php
 
-if ($loggedIn) {
+if (isset($_SESSION["role"])) {
     echo "<a class='w3-bar-item w3-right w3-button w3-hide-medium w3-hover-white w3-padding-16' href='logout.php'>Logout</a>";
 } else {
     echo "<a class='w3-bar-item w3-right w3-button w3-hide-medium w3-hover-white w3-padding-16' href='login.php'>Login</a>";
@@ -27,9 +27,9 @@ if (isset($_SESSION["role"]) && $_SESSION["role"] === "admin") {
     echo "<a class='w3-bar-item w3-right w3-button w3-hide-medium w3-hover-white w3-padding-16' href='admin_users.php'>Admin</a>";
 }
 
-if ($loggedIn) {
-    echo "<a class='w3-bar-item w3-right w3-button w3-hover-white' href='cart.php'><img src=images/shopping-cart.png ></a>";
-    echo "<a class='w3-bar-item w3-right w3-button  w3-hover-white' href='user_profile.php'><img src=images/user.png ></a>";
+if (isset($_SESSION["role"])) {
+    echo "<a class='w3-bar-item w3-right w3-button w3-hover-white' href='cart.php'><img width='35px' src='images/shopping-cart.png' ></a>";
+    echo "<a class='w3-bar-item w3-right w3-button  w3-hover-white' href='user_profile.php'><img width='35px' src='images/user.png' ></a>";
 }
 ?>
     <button class="w3-btn w3-bar-item w3-right w3-hide-medium w3-hover-white w3-padding-16" type="submit"
