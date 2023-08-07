@@ -99,7 +99,7 @@ if (isset($_SESSION["role"])) {
             exit();
         } else if (isset($_POST["buy"])) {
             buyCart();
-            header('Location: thanks_for_buying.php', true, 301);
+            header('Location: thanks_for_buying.php', true, 302);
             exit();
         }
     }
@@ -215,6 +215,8 @@ if (!isset($_SESSION["role"])) {
 
 if (isset($_POST["solution"]) && isset($_POST["id"])) {
     solve_challenge(sanitize_input($_POST["id"]), hash_hmac("sha512", $_POST["solution"], "FJk!br!5"));
+    header("Location:challenges.php");
+    exit();
 }
 
 if (isset($_POST["reset"])) {

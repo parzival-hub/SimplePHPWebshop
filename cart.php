@@ -3,7 +3,7 @@ include 'functions.php';
 session_start();
 error_reporting(E_ERROR | E_PARSE);
 if (!isset($_SESSION["user_id"])) {
-    header('Location: login.php', true, 301);
+    header('Location: login.php', true, 302);
     exit();
 }
 ?>
@@ -39,7 +39,7 @@ foreach ($results as $item) {
 <td>
  <form class ="w3-bar-item w3-right" method="POST" id="delete_product" action="api.php">
       <input class="w3-input" name="product_id" value="' . sanitize_input($item["id"]) . '" style="display:none">
-      <input class="w3-input" name="in_cart" style="display:none">
+      <input class="w3-input" name="in_cart" value="true" style="display:none">
       <button class="w3-button w3-red">Remove</button>
       </form>
 </td>
@@ -54,8 +54,8 @@ if (empty($results)) {
 } else {
     echo '
   <form class ="w3-bar-item w3-center" method="POST" id="buy" action="api.php">
-      <input class="w3-input" name="buy" style="display:none">
-      <input class="w3-input" name="in_cart" style="display:none">
+      <input class="w3-input" name="buy" value="true" style="display:none">
+      <input class="w3-input" name="in_cart" value="true" style="display:none">
       <button class="w3-button w3-green w3-center">Place order</button>
       </form>
       ';

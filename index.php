@@ -38,7 +38,7 @@ foreach ($results as $item) {
         ' . sanitize_input($item["quantity"]) . ' in Stock
         <form class= "w3-bar-item w3-center" method="POST" id="addProductToCart" action="api.php">
         <input name="product_id" value="' . sanitize_input($item['id']) . '" style="display:none">
-        <input name="add_to_cart" style="display:none">
+        <input name="add_to_cart" value="true" style="display:none">
         <input style="width:60px;height:36px" type="number" min=1 name="quantity" value="1">
         <button class="w3-button w3-green">Add to Cart</button>
         </form >

@@ -5,7 +5,7 @@ error_reporting(E_ERROR | E_PARSE);
 
 // Redirect zum index
 if (isset($_SESSION["role"])) {
-    header('Location: index.php', true, 301);
+    header('Location: index.php', true, 302);
     exit();
 }
 
