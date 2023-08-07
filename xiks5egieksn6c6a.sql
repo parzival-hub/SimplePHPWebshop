@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 04. Aug 2023 um 14:31
+-- Erstellungszeit: 07. Aug 2023 um 14:48
 -- Server-Version: 10.4.28-MariaDB
 -- PHP-Version: 8.2.4
 
@@ -55,8 +55,9 @@ CREATE TABLE `challenges` (
 --
 
 INSERT INTO `challenges` (`id`, `name`, `description`, `points`, `time_minutes`, `solved`, `solution`) VALUES
-(1, 'What a wierd name', 'Find a deactivated user with an wierd username and submit it as a flag.', 0, 0, 0, '8679e8d418ed5a517da62829bf5064f78d49a1479818bbe69598b65a20c151f17e231d9b1bb48ff40dc7ac69bada186aa7ada0b1b0eb3ef8d83bef70a8abc7cf'),
-(2, 'Directory Listing', 'Leak a file with an uncommon name and submit it here. ', 20, 20, 0, 'b82dceada27026617d176e258bdd1425990ef7935af02731955d2aba7d9d3caad144cc11987be9a0308e9bd917c839e3afedede7b996bbedd3ed5597c8da7f75');
+(0, 'Get VIP', 'Find a way to get the admin role. Submit the flag displayed in the admin section.', 10, 15, 0, 'f06d3e9c250cc7da9866e3f1801c5b32e175f63cf2e0b6d6d7da653081a2427abedf64cdccc36939d79dcc45e1ccf7374ee074acccef22960911520714c2c88e'),
+(1, 'What a wierd name', 'Find a deactivated user with an wierd username and submit it as a flag.', 20, 15, 0, 'ecc7dccbf51f5d0c719d7d03842f508a1fbea5df098971c3a29367bd8d5b35c6d5378dd44cd8052b73cea77e9a382a6274099f28369f62891274c603523a9149'),
+(2, 'Directory Listing', 'Leak a exposed file with an uncommon name and submit it here. ', 30, 20, 0, '6c19fdbf5a7c53a3b0c7c75bb86bd11fdcefe7c2fca6bfd29d68d14d5c8d2654dab44ff4ff7c57a5eec0ee5701b717a868a28e3bf8707c22fa9d96bf1aeaeb57');
 
 -- --------------------------------------------------------
 
@@ -102,7 +103,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `email`, `role`, `active`) VALUES
-(7, 'admin', '683d696ae7f5ee157bbbe01a339126d597dde353599641e5209c8e3ccc7b1b4d849f2ec19ba60a5983a8aaa98bbfeffe94729bbc5a08734c8e01927b01bd5312', 'adminmail@thisisnuts.de', 'admin', 1),
+(7, 'admin', 'b1bdb5e53a6afd54d4f5d4bbebb984c96b55b2892a63448a463971c41124b84ec0cfdc2fae3b5149ffc2652ad074082e01bd88a6ed2866dfeae97d90e210c134', 'adminmail@thisisnuts.de', 'admin', 1),
 (12, 'C-THATS-AWIER-DNAME', 'f69fcda0e4e3b794f81c3d56819e35d8483fe337ca226aa6d14ae2021a97a2bfa5c415b7570ccaa859d9fb001fd576b6d74bc3803b69c08547aa53f305fb7abc', 'wierduser@thisisnuts.de', 'user', 0),
 (20, 'user', '2c2b90a03e67f2b04455a61d3e1465b74b7745d5b4dc640a119c8726e24ccb7f33c77d9e7041ae91ca0ec72298564ed9c5928b60f07b48c1e77a70a18c65c94a', 'user@thisisnuts.de', 'user', 1);
 
@@ -149,7 +150,7 @@ ALTER TABLE `cart`
 -- AUTO_INCREMENT für Tabelle `challenges`
 --
 ALTER TABLE `challenges`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT für Tabelle `products`

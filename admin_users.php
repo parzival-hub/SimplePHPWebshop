@@ -15,6 +15,8 @@ if (isset($_SESSION["role"]) && $_SESSION["role"] === 'admin') {
         <a class='w3-bar-item w3-button' href='admin_products.php'>Produkte</a>
     </div>
 
+
+    <h3 class="w3-center w3-green">C{V3RyI-mP0Rt-Ant}</h3>
     <div style="margin:10px">
         <div class="w3-row">
             <h4>Add User:</h4>

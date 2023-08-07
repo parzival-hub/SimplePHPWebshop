@@ -7,9 +7,9 @@ include 'functions.php';
 include "header.php";
 error_reporting(E_ERROR | E_PARSE);
 
-#print(hash_hmac("sha512", "C-Thats-AWier-dName", "FJk!br!5"));
-#print(hash_hmac("sha512", "C-iWasH-idden-SoBad", "FJk!br!5"));
-
+// print(hash_hmac("sha512", "C{PrE11yW1eRdN4Me}", "FJk!br!5") . "<br>");
+// print(hash_hmac("sha512", "C{VErYb4dlyh1dDeN}", "FJk!br!5") . "<br>");
+// print(hash_hmac("sha512", "C{V3RyI-mP0Rt-Ant}", "FJk!br!5") . "<br>");
 ?>
 
 <body>
@@ -35,7 +35,7 @@ if (!empty($results)) {
         <p style="text-align:left;margin:30px"><?php echo sanitize_input($description) ?></p>
         <?php if (!$row["solved"]) {?>
         <form method='POST' action='api.php'>
-            <input name='solution' placeholder='C-XXXXX-XXXXX-XXXXX'>
+            <input name='solution' placeholder='C{XXXXXXXXXXXXXXX}'>
             <input name='id' style="display: none" value='<?php echo sanitize_input($id) ?>'>
             <button class="w3-button w3-black">Submit</button>
         </form>
