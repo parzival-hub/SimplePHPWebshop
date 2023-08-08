@@ -1,6 +1,14 @@
 <?php
 include 'functions.php';
+
+ini_set('session.cookie_samesite', 'Strict');
+ini_set('session.cookie_httponly', 1);
+
+if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+    ini_set('session.cookie_secure', 1);
+}
 session_start();
+
 error_reporting(E_ERROR | E_PARSE);
 
 include "header.php";
@@ -49,3 +57,18 @@ foreach ($results as $item) {
 ?>
     </div>
 </body>
+
+
+
+<!-- <script>
+function createUser() {
+    console.log("create");
+    fetch("api.php", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'createUser=true&username=testuser&email=testuser@thisisnuts.de&password=testpassword&password2=testpassword&role=user'
+    });
+}
+</script> -->

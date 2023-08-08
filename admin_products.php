@@ -36,6 +36,7 @@ exit();
         <form action=" api.php" method="POST" enctype="multipart/form-data">
             Select image to upload:
             <input class="w3-input" type="file" name="fileToUpload" id="fileToUpload">
+            <input class="w3-input" name="adminProducts" value="true" style="display: none">
             <button class="w3-button w3-green">Upload</button>
             <div style="width:200px">
                 <?php
@@ -52,7 +53,8 @@ if (isset($_SESSION["uploadSuccess"])) {
         </form>
 
         <form style="margin-left:150px" class="w3-center" method="POST" id="add_product" action="api.php">
-            <input class="w3-input" name="addProduct" style="display: none">
+            <input class="w3-input" name="addProduct" value="true" style="display: none">
+            <input class="w3-input" name="adminProducts" value="true" style="display: none">
             <input class="w3-input" type="text" name="name" placeholder="Name">
             <input class="w3-input" type="text" name="description" placeholder="Description">
             <input class="w3-input" type="text" name="quantity" placeholder="Quantity">
@@ -73,6 +75,7 @@ if (isset($_SESSION["uploadSuccess"])) {
     <div style="display:flex;margin-top:60px;" class="w3-right">
         <form action="api.php" method="POST" enctype="multipart/form-data" style="margin:10px">
             <input class="w3-button w3-red" type="submit" value="Restock all products" name="restock">
+            <input class="w3-input" name="adminProducts" value="true" style="display: none">
         </form>
         <form method="GET" id="search" action="admin_products.php" style="display:flex">
             <input class="w3-input" type="search" id="suche" name="s" placeholder="Filter products...">
@@ -105,6 +108,7 @@ foreach ($results as $item) {
 <td>
  <form class ="w3-bar-item w3-right" method="POST" id="delete_product" action="api.php">
       <input class="w3-input" name="delete" value="' . sanitize_input($item["name"]) . '" style="display:none">
+      <input class="w3-input" name="adminProducts" value="true" style="display: none">
       <button class="w3-button w3-red">Delete</button>
       </form>
 </td>

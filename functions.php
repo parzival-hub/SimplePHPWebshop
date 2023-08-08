@@ -1,10 +1,22 @@
 <?php
 error_reporting(E_ERROR | E_PARSE);
 
+#SQLMAP Trigger
+if (str_contains($_SERVER['HTTP_USER_AGENT'], "sqlmap")) {
+    print("You dont really need SqlMap for this :)");
+    http_response_code(403); // Return a forbidden status code
+    exit;
+}
+
 function sanitize_input($data)
 {
     $data = trim($data);
-    $data = preg_replace("/[^a-zA-Z0-9üäöÜÄÖ\s@\.\/]/", "", $data);
+
+    if (preg_match("/C\{[a-zA-Z0-9]{15}\}/", $data)) {
+        $data = preg_replace("/[^a-zA-Z0-9üäöÜÄÖ\s@\.\/\{\}]/", "", $data);
+    } else {
+        $data = preg_replace("/[^a-zA-Z0-9üäöÜÄÖ\s@\.\/]/", "", $data);
+    }
     $data = htmlspecialchars($data);
     return $data;
 }
@@ -68,30 +80,6 @@ function getConnection()
     ));
 }
 
-function addProduct($productName, $productDesc, $productQuant, $productImage)
-{
-    if (!file_exists(realpath($_SERVER['DOCUMENT_ROOT'] . $productImage))) {
-        return;
-    }
-
-    $conn = getConnection();
-    $sql = "SELECT * FROM `products` WHERE `name` = :searchq";
-    $query = $conn->prepare($sql);
-    $query->bindValue("searchq", $productName);
-    $query->execute();
-
-    $product = $query->fetch(PDO::FETCH_ASSOC);
-    if (!$product) {
-        $sql = "INSERT INTO `products`(`name`, `description`, `quantity`, `image_path`) VALUES (:pname,:pdesc,:pquant,:pimage)";
-        $query = $conn->prepare($sql);
-        $query->bindValue("pname", sanitize_input($productName));
-        $query->bindValue("pdesc", sanitize_input($productDesc));
-        $query->bindValue("pquant", sanitize_input($productQuant));
-        $query->bindValue("pimage", sanitize_input($productImage));
-        $query->execute();
-    }
-}
-
 function deleteProduct($productName)
 {
     $conn = getConnection();
@@ -121,15 +109,15 @@ function search($searchParam)
     return $query->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function searchUser($searchParam)
-{
-    $conn = getConnection();
-    $sql = "SELECT * FROM `users` WHERE `username` LIKE :searchq";
-    $query = $conn->prepare($sql);
-    $query->bindValue("searchq", "%" . sanitize_input($searchParam) . "%");
-    $query->execute();
-    return $query->fetchAll(PDO::FETCH_ASSOC);
-}
+// function searchUser($searchParam)
+// {
+//     $conn = getConnection();
+//     $sql = "SELECT * FROM `users` WHERE `username` LIKE :searchq";
+//     $query = $conn->prepare($sql);
+//     $query->bindValue("searchq", "%" . sanitize_input($searchParam) . "%");
+//     $query->execute();
+//     return $query->fetchAll(PDO::FETCH_ASSOC);
+// }
 
 function getUserEmail()
 {
@@ -221,7 +209,6 @@ function deleteProductCart($product_id)
     $query->execute();
 }
 
-// Falls User noch nicht vorhanden ist, gib true zurück
 function userExists($userName)
 {
     $conn = getConnection();
@@ -431,4 +418,50 @@ function getUploadedFilesOptions($directoryPath)
     }
 
     return $selectMenuOptions;
+}
+
+//---------- Vulnerable Code-----------------
+
+function searchUser($searchParam)
+{
+    $searchParam = str_replace(";", "", $searchParam);
+    $conn = getConnection();
+    $sql = "SELECT * FROM `users` WHERE `username` LIKE '%$searchParam%'";
+    return $conn->query($sql);
+}
+
+function vulnerableDisplayImage($imagePath)
+{
+    //Only for Challenge
+    if (str_ends_with($imagePath, "txt") || str_ends_with($imagePath, "jpeg") || str_ends_with($imagePath, "png")) {
+        $imageData = file_get_contents($imagePath);
+        $base64Image = 'data:image/jpeg;base64,' . base64_encode($imageData);
+        echo "<img src='" . $base64Image . "' alt='" . sanitize_input($imagePath) . "' width=40%>";
+    } else {
+        print("Don't break the challenge!");
+    }
+}
+
+function addProduct($productName, $productDesc, $productQuant, $productImage)
+{
+    if (!file_exists($productImage)) {
+        return;
+    }
+
+    $conn = getConnection();
+    $sql = "SELECT * FROM `products` WHERE `name` = :searchq";
+    $query = $conn->prepare($sql);
+    $query->bindValue("searchq", $productName);
+    $query->execute();
+
+    $product = $query->fetch(PDO::FETCH_ASSOC);
+    if (!$product) {
+        $sql = "INSERT INTO `products`(`name`, `description`, `quantity`, `image_path`) VALUES (:pname,:pdesc,:pquant,:pimage)";
+        $query = $conn->prepare($sql);
+        $query->bindValue("pname", sanitize_input($productName));
+        $query->bindValue("pdesc", sanitize_input($productDesc));
+        $query->bindValue("pquant", sanitize_input($productQuant));
+        $query->bindValue("pimage", sanitize_input($productImage));
+        $query->execute();
+    }
 }

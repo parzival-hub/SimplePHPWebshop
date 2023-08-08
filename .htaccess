@@ -1,0 +1,4 @@
+Options -Indexes
+<Files "flag.txt">
+    Deny from all
+</Files>

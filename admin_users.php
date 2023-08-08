@@ -42,8 +42,8 @@ if (isset($_SESSION["role"]) && $_SESSION["role"] === 'admin') {
         <form class="w3-bar-item w3-right" method="GET" action="admin_users.php">
             <div style="display:flex">
                 <input class="w3-input" type="search" name="s" placeholder="Search users...">
-                <button class="w3-btn w3-bar-item w3-right w3-hide-medium w3-hover-white w3-padding-16" type="submit"
-                    form="search">Search</button>
+                <button class="w3-btn w3-bar-item w3-right w3-hide-medium w3-hover-white w3-padding-16"
+                    type="submit">Search</button>
             </div>
         </form>
 
@@ -55,14 +55,14 @@ if (isset($_SESSION["role"]) && $_SESSION["role"] === 'admin') {
             </tr>
             <?php
 if (isset($_GET["s"]) && !empty($_GET["s"])) {
-        $search_param = sanitize_input($_GET["s"]);
+        $search_param = $_GET["s"]; //sanitize_input($_GET["s"]);
     } else {
         $search_param = "";
     }
 
     $results = searchUser($search_param);
     foreach ($results as $item) {
-        if ($item["active"] === 0) {
+        if ($item["active"] !== 1) {
             continue;
         }
 

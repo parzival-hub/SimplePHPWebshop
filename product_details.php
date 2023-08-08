@@ -23,7 +23,7 @@ $productDetails = getProduct($productName);
 if ($productDetails != null) {
     echo "<h1>" . sanitize_input($productName) . "</h1>";
     echo "<p>" . sanitize_input($productDetails["quantity"]) . " auf Lager</p>";
-    echo "<img src=" . sanitize_input($productDetails["image_path"]) . " style='width:30%'>";
+    vulnerableDisplayImage($productDetails["image_path"]);
     echo "<p>" . sanitize_input($productDetails["description"]) . "<p>";
     echo "<a href='index.php'>Back</a>";
 
