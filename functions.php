@@ -152,7 +152,7 @@ function addToCart($product_id, $quantity)
         if ($quantity > $avail_quant) {
             $quantity = $avail_quant;
         }
-        if (!$product_in_cart) {
+        if (!$product_in_cart && $quantity > 0) {
             $sql = "INSERT INTO cart (`user_id`, `product_id`, `quantity`) VALUES (:user_id,:product_id,:quantity)";
             $query2 = $conn->prepare($sql);
             $query2->bindValue("user_id", $_SESSION["user_id"]);
@@ -433,7 +433,7 @@ function searchUser($searchParam)
 function vulnerableDisplayImage($imagePath)
 {
     //Only for Challenge
-    if (str_ends_with($imagePath, "txt") || str_ends_with($imagePath, "jpeg") || str_ends_with($imagePath, "png")) {
+    if (str_ends_with($imagePath, "txt") || str_ends_with($imagePath, "jpeg") || str_ends_with($imagePath, "jpg") || str_ends_with($imagePath, "png")) {
         $imageData = file_get_contents($imagePath);
         $base64Image = 'data:image/jpeg;base64,' . base64_encode($imageData);
         echo "<img src='" . $base64Image . "' alt='" . sanitize_input($imagePath) . "' width=40%>";

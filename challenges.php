@@ -10,7 +10,7 @@ error_reporting(E_ERROR | E_PARSE);
 // print(hash_hmac("sha512", "C{PrE11yW1eRdN4Me}", "FJk!br!5") . "<br>");
 // print(hash_hmac("sha512", "C{VErYb4dlyh1dDeN}", "FJk!br!5") . "<br>");
 // print(hash_hmac("sha512", "C{V3RyI-mP0Rt-Ant}", "FJk!br!5") . "<br>");
-// adminpass: 5g?7CcrhT$4MGx7y
+// adminpass: SuPerS3cure4dmInp4ssW0rd
 ?>
 
 <body>

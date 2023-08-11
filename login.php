@@ -34,6 +34,7 @@ include "header.php"
             <?php
 if (!empty($_SESSION["error"])) {
     echo "<p style=\"color:red\">" . sanitize_input($_SESSION["error"]) . "</p>";
+    unset($_SESSION["error"]);
 }
 
 ?>

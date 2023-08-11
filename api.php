@@ -171,19 +171,13 @@ if (isset($_SESSION["role"])) {
     }
 
     if (isset($_POST["add_to_cart"]) && isset($_POST["product_id"])) {
-        if (isset($_SESSION["user_id"])) {
-            $product_id = sanitize_input($_POST["product_id"]);
-            $quantity = sanitize_input($_POST["quantity"]);
-            if (is_numeric($quantity) && $quantity > 0) {
-                addToCart($product_id, $quantity);
-                header("Location: cart.php");
-                exit();
-            }
-        } else {
-            header("Location: login.php", true, 302);
+        $product_id = sanitize_input($_POST["product_id"]);
+        $quantity = sanitize_input($_POST["quantity"]);
+        if (is_numeric($quantity) && $quantity > 0) {
+            addToCart($product_id, $quantity);
+            header("Location: cart.php");
             exit();
         }
-
     }
 
     //Change user data
@@ -278,7 +272,14 @@ if (!isset($_SESSION["role"])) {
             exit();
         }
     }
+
+    if (isset($_POST["add_to_cart"]) && isset($_POST["product_id"])) {
+        header("Location: login.php");
+        exit();
+    }
 }
+
+//----------- Geht immer egal ob eingeloggt oder nicht
 
 if (isset($_POST["solution"]) && isset($_POST["id"])) {
     solve_challenge(sanitize_input($_POST["id"]), hash_hmac("sha512", $_POST["solution"], "FJk!br!5"));
