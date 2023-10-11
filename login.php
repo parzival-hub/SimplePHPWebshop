@@ -22,7 +22,7 @@ include "header.php"
     <main>
         <form method="post" action="api.php">
             <h1>Login</h1>
-
+            <input style="display:none" name="login">
             <div>
                 <label for="username">Username:</label>
                 <input type="text" name="username" id="username">

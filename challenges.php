@@ -33,7 +33,7 @@ if (!empty($results)) {
                 class="<?php echo ($isSolved ? 'solved' : 'unsolved') ?>"><?php echo ($isSolved ? 'solved' : 'unsolved') ?></span>
         </p>
 
-        <p style="text-align:left;margin:30px"><?php echo sanitize_input($description) ?></p>
+        <p style="margin:30px"><?php echo sanitize_input($description) ?></p>
         <?php if (!$row["solved"]) {?>
         <form method='POST' action='api.php'>
             <input name='solution' placeholder='C{XXXXXXXXXXXXXXX}'>

@@ -27,8 +27,8 @@ exit();
 <?php include "header.php";?>
 
 <div class="w3-center">
-    <a class='w3-bar-item w3-button' href='admin_users.php'>Benutzer</a>
-    <a class='w3-bar-item w3-gray w3-button' href='admin_products.php'>Produkte</a>
+    <a class='w3-bar-item w3-button' href='admin_users.php'>User</a>
+    <a class='w3-bar-item w3-gray w3-button' href='admin_products.php'>Products</a>
 </div>
 
 <div style="margin:10px;margin-top:60px">

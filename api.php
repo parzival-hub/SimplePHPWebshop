@@ -206,7 +206,7 @@ if (isset($_SESSION["role"])) {
 if (!isset($_SESSION["role"])) {
 
     //Login User
-    if (isset($_POST["username"]) && isset($_POST["password"])) {
+    if (isset($_POST["login"]) && isset($_POST["username"]) && isset($_POST["password"])) {
         $pass = $_POST["password"];
         $name = sanitize_input($_POST["username"]);
 
@@ -235,7 +235,7 @@ if (!isset($_SESSION["role"])) {
     //Create user
     if (isset($_POST["username"]) && isset($_POST["password"]) && isset($_POST["password2"]) && isset($_POST["email"])) {
 
-        if (empty($_POST["username"]) && empty($_POST["password"]) && empty($_POST["password2"]) && empty($_POST["email"])) {
+        if (empty($_POST["username"]) || empty($_POST["password"]) || empty($_POST["password2"]) || empty($_POST["email"])) {
             $_SESSION["error"] = "Please fill out all fields.";
             header("Location:register.php");
             exit();
@@ -268,11 +268,27 @@ if (!isset($_SESSION["role"])) {
 
         if (empty($error)) {
             create_user($username, $password, $email, "user");
+
+            $user = loginUser($username, $password);
+            if ($user !== "None") {
+                session_regenerate_id();
+                $_SESSION["username"] = $user["username"];
+                $_SESSION["role"] = $user["role"];
+                $_SESSION["user_id"] = $user["id"];
+                header("Location: index.php");
+                exit();
+            } else {
+                $_SESSION["error"] = "Username or password do not match our records";
+                header("Location: login.php");
+                exit();
+            }
+
             header("Location:index.php");
             exit();
         }
     }
 
+    //Add to Cart
     if (isset($_POST["add_to_cart"]) && isset($_POST["product_id"])) {
         header("Location: login.php");
         exit();

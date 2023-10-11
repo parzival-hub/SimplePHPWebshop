@@ -109,16 +109,6 @@ function search($searchParam)
     return $query->fetchAll(PDO::FETCH_ASSOC);
 }
 
-// function searchUser($searchParam)
-// {
-//     $conn = getConnection();
-//     $sql = "SELECT * FROM `users` WHERE `username` LIKE :searchq";
-//     $query = $conn->prepare($sql);
-//     $query->bindValue("searchq", "%" . sanitize_input($searchParam) . "%");
-//     $query->execute();
-//     return $query->fetchAll(PDO::FETCH_ASSOC);
-// }
-
 function getUserEmail()
 {
     $conn = getConnection();
